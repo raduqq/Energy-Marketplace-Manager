@@ -1,13 +1,10 @@
 package game.player;
 
-import com.fasterxml.jackson.annotation.JsonIgnore;
-
 public abstract class Player {
-    private int id;
-    private int budget;
-
-    @JsonIgnore
-    private boolean isBankrupt;
+    // TODO: FIX: REPLACE WITH PRIVATE.
+    protected int id;
+    protected int budget;
+    protected boolean isBankrupt;
 
     public Player(int id, int budget) {
         this.id = id;
@@ -39,6 +36,7 @@ public abstract class Player {
         isBankrupt = bankrupt;
     }
 
-    public abstract void takeTurn();
     public abstract void update();
+    public abstract void takeTurn();
+    public abstract void goBankrupt();
 }

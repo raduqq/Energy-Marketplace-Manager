@@ -6,6 +6,13 @@ public abstract class AbstractContract {
     protected int price;
     protected int remContractMonths;
 
+    public AbstractContract(int issuerID, int beneficiaryID, int price, int remContractMonths) {
+        this.issuerID = issuerID;
+        this.beneficiaryID = beneficiaryID;
+        this.price = price;
+        this.remContractMonths = remContractMonths;
+    }
+
     public int getBeneficiaryID() {
         return beneficiaryID;
     }
@@ -37,4 +44,6 @@ public abstract class AbstractContract {
     public void setRemContractMonths(int remContractMonths) {
         this.remContractMonths = remContractMonths;
     }
+
+    public abstract void terminate();
 }
