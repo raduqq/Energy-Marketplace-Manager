@@ -6,7 +6,7 @@ import java.util.ArrayList;
 import java.util.List;
 
 public final class Consumers {
-    private static final Consumers instance;
+    private static Consumers instance;
 
     private static List<Consumer> consumerList;
 
@@ -20,6 +20,10 @@ public final class Consumers {
 
     public static Consumers getInstance() {
         return instance;
+    }
+
+    public static void reset() {
+        instance = new Consumers();
     }
 
     public List<Consumer> getConsumerList() {

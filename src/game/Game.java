@@ -14,7 +14,7 @@ import java.util.List;
 
 // TODO: scoate metodele statice!
 public final class Game {
-    private static final Game instance;
+    private static Game instance;
 
     // puteai sa agregi aici o lista de players si terminai situatia
 
@@ -22,6 +22,14 @@ public final class Game {
 
     // de inclus si Game.reset();
     static { instance = new Game(); }
+
+    public static void reset() {
+        instance = new Game();
+
+        Consumers.reset();
+        Distributors.reset();
+
+    }
 
     public static Game getInstance() { return instance; }
 
@@ -114,11 +122,6 @@ public final class Game {
             updatePlayers();
             takeTurns();
             updateElements();
-
-            // DEBUG
-            System.out.println("---------------------- " + (i - 1) + " ----------------------");
-            for (Consumer consumer : Consumers.getInstance().getConsumerList()) System.out.println(consumer);
-            for (Distributor distributor : Distributors.getInstance().getDistributorList()) System.out.println(distributor);
         }
     }
 

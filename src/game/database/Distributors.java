@@ -7,7 +7,7 @@ import java.util.ArrayList;
 import java.util.List;
 
 public final class Distributors {
-    private static final Distributors instance;
+    private static Distributors instance;
 
     private static List<Distributor> distributorList;
 
@@ -19,6 +19,10 @@ public final class Distributors {
 
     public static Distributors getInstance() {
         return instance;
+    }
+
+    public static void reset() {
+        instance = new Distributors();
     }
 
     public List<Distributor> getDistributorList() {
