@@ -50,6 +50,7 @@ public final class Consumer extends Player {
 
         // pick distributor with lowest price
         currDistributor = Distributors.getInstance().getDistributorList().stream()
+                        .filter(distributor -> !distributor.isBankrupt)
                         .sorted(distributorComp)
                         .collect(Collectors.toList()).get(0);
 
@@ -57,23 +58,21 @@ public final class Consumer extends Player {
         currDistributor.assignContract(this);
     }
 
-//    public void payOverdue() {
-//        int overdue = currContract.getOverdue();
-//
-//        // No overdue => nothing to do here
-//        if (overdue == 0) {
-//            return;
-//        }
-//
-//        if (overdue > budget) {
-//            goBankrupt();
-//            return;
-//        }
-//
-//        currDistributor.collectPayment(overdue);
-//        budget -= overdue;
-//        currContract.clearOverdue();
-//    }
+    // Edge case: contract has run down, therefore it doesn't generate new bills
+    // => only need to pay the last one, if it has any overdue
+    public void resolvePastArrangement() {
+        if (currContract == null) {
+            return;
+        }
+
+        if (currContract.getRemContractMonths() == 0 && currContract.getOverdue() != 0) {
+            payCurrentBill();
+
+            if (!isBankrupt) {
+                currDistributor.terminateContract(currContract);
+            }
+        }
+    }
 
     public void payCurrentBill() {
         // Normal bill
@@ -105,6 +104,7 @@ public final class Consumer extends Player {
         currDistributor.collectPayment(bill);
         budget -= bill;
 
+        // Had overdue, but paid it
         if (overdue > 0) {
             currContract.clearOverdue();
         }
@@ -118,6 +118,10 @@ public final class Consumer extends Player {
 
     @Override
     public void takeTurn() {
+        if (!isBankrupt) {
+            resolvePastArrangement();
+        }
+
         if (!isBankrupt) {
             pickDistributor();
             payCurrentBill();

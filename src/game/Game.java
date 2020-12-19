@@ -41,19 +41,9 @@ public final class Game {
     }
 
     public static void updateElements() { // contractele
-        List<Contract> expiredContracts = new ArrayList<>();
-
         for (Distributor distributor : Distributors.getInstance().getDistributorList()) {
             for (Contract contract : distributor.getContractList()) {
                 contract.update();
-
-                if (contract.getRemContractMonths() < 0) {
-                    expiredContracts.add(contract);
-                }
-            }
-
-            for (Contract expiredContract : expiredContracts) {
-                distributor.terminateContract(expiredContract);
             }
         }
     }
@@ -84,12 +74,39 @@ public final class Game {
     }
 
     public static void takeTurns() {
-        Consumers.getInstance().getConsumerList().forEach(Consumer::takeTurn);
-        Distributors.getInstance().getDistributorList().forEach(Distributor::takeTurn);
+        // for debugging
+        for (Consumer consumer : Consumers.getInstance().getConsumerList()) {
+            consumer.takeTurn();
+        }
+
+        for (Distributor distributor : Distributors.getInstance().getDistributorList()) {
+            distributor.takeTurn();
+        }
+    }
+
+    // Checks if game is still playable (i.e. there are still functioning distributors
+    public static boolean endGameCheck() {
+        int workingDistributors = 0;
+
+        for (Distributor distributor : Distributors.getInstance().getDistributorList()) {
+            if (!distributor.isBankrupt()) {
+                workingDistributors++;
+            }
+        }
+
+        if (workingDistributors == 0) {
+            return true;
+        }
+
+        return false;
     }
 
     public static void play(List<MonthlyUpdateInputData> monthlyUpdates) {
         for (int i = 0; i <= numberOfTurns; i++) {
+            if (endGameCheck()) {
+                return;
+            }
+
             if (i > 0) {
                 applyMonthlyUpdates(monthlyUpdates);
             }

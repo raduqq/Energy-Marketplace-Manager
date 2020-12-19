@@ -38,7 +38,7 @@ public final class Distributor extends Player{
             price = infrastructureCosts + productionCosts + profit;
         } else {
             price = Math.toIntExact(Math.round(Math.floor(
-                    infrastructureCosts / noClients)
+                    infrastructureCosts / contractList.size())
                     + productionCosts
                     + profit));
         }
@@ -116,21 +116,19 @@ public final class Distributor extends Player{
     public void payCosts() {
         int costs = infrastructureCosts + productionCosts * noClients;
 
-        if (costs > budget) {
-            goBankrupt();
-            return;
-        }
-
         budget -= costs;
+
+        if (budget < 0) {
+            goBankrupt();
+        }
     }
 
     @Override
     public void goBankrupt() {
         isBankrupt = true;
 
-        for(Contract contract : contractList) {
-            terminateContract(contract);
-        }
+        List<Contract> dissolvedContracts = contractList;
+        dissolvedContracts.forEach(Contract::terminate);
     }
 
     @Override
@@ -140,11 +138,31 @@ public final class Distributor extends Player{
         }
     }
 
+    public void updateContractList() {
+        List<Contract> expiredContracts = new ArrayList<>();
+
+        // fetching expired contracts
+        for (Contract contract : getContractList()) {
+            if (contract.getRemContractMonths() == 0 && contract.getOverdue() == 0) {
+                expiredContracts.add(contract);
+            }
+        }
+
+        // removing expired contracts
+        for (Contract expiredContract : expiredContracts) {
+            terminateContract(expiredContract);
+        }
+    }
+
     @Override
     public void update() {
         if (!isBankrupt) {
-            noClients = contractList.size();
+            // price
             computePrice();
+            // contract list
+            updateContractList();
+            // no clients: excluding those whose contracts expired this month
+            noClients = contractList.size();
         }
     }
 

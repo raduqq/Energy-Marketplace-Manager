@@ -37,6 +37,8 @@ public final class Contract extends AbstractContract{
     public String toString() {
         return "Contract{" +
                 "overdue=" + overdue +
+                ", issuerID= " + issuerID +
+                ", price=" + price +
                 ", remContractMonths=" + remContractMonths +
                 '}';
     }
