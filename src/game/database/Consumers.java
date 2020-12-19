@@ -22,15 +22,15 @@ public final class Consumers {
         return instance;
     }
 
-    public static List<Consumer> getConsumerList() {
+    public List<Consumer> getConsumerList() {
         return consumerList;
     }
 
-    public static void addToDB(Consumer consumer) {
+    public void addToDB(Consumer consumer) {
         Consumers.consumerList.add(consumer);
     }
 
-    public static Consumer findConsumerByID (int id) {
+    public Consumer findConsumerByID (int id) {
         for (Consumer consumer : consumerList) {
             if (consumer.getId() == id) {
                 return consumer;

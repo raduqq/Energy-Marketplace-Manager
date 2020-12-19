@@ -2,6 +2,8 @@ package main;
 
 import fileio.input.InputLoader;
 import game.Game;
+import game.database.Consumers;
+import game.database.Distributors;
 
 public class Main {
     public static void main(String[] args) throws Exception {
@@ -10,6 +12,8 @@ public class Main {
         String inputPath = args[0];
         InputLoader inputLoader = new InputLoader(inputPath);
         inputLoader.loadData();
-        Game.play();
+
+        // TODO: fa-l singleton sau ceva, arata ft urat asa.
+        Game.play(inputLoader.getInputData().getMonthlyUpdates());
     }
 }

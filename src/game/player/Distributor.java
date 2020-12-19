@@ -3,10 +3,13 @@ package game.player;
 import game.element.Contract;
 
 import java.util.ArrayList;
+import java.util.Iterator;
 import java.util.List;
+import java.util.stream.Collectors;
 
 public final class Distributor extends Player{
     private List<Contract> contractList;
+    private int noClients;
     private int price;
     private int contractLength;
     private int infrastructureCosts;
@@ -20,6 +23,7 @@ public final class Distributor extends Player{
                        int productionCosts) {
         super(id, budget);
         this.contractList = new ArrayList<>();
+        this.noClients = 0;
         this.contractLength = contractLength;
         this.infrastructureCosts = infrastructureCosts;
         this.productionCosts = productionCosts;
@@ -34,10 +38,26 @@ public final class Distributor extends Player{
             price = infrastructureCosts + productionCosts + profit;
         } else {
             price = Math.toIntExact(Math.round(Math.floor(
-                    infrastructureCosts / contractList.size())
+                    infrastructureCosts / noClients)
                     + productionCosts
                     + profit));
         }
+    }
+
+    public int getInfrastructureCosts() {
+        return infrastructureCosts;
+    }
+
+    public void setInfrastructureCosts(int infrastructureCosts) {
+        this.infrastructureCosts = infrastructureCosts;
+    }
+
+    public int getProductionCosts() {
+        return productionCosts;
+    }
+
+    public void setProductionCosts(int productionCosts) {
+        this.productionCosts = productionCosts;
     }
 
     public List<Contract> getContractList() {
@@ -76,6 +96,7 @@ public final class Distributor extends Player{
         consumer.setCurrContract(currContract);
         // write to the distributors books
         contractList.add(currContract);
+        noClients++;
     }
 
     public void terminateContract(Contract contract) {
@@ -83,6 +104,9 @@ public final class Distributor extends Player{
         contract.terminate();
         // write off this guy's books
         contractList.remove(contract);
+
+        // NOT modifying noClients here.
+        // noClients at start of round needed for payCosts.
     }
 
     public void collectPayment(int payment) {
@@ -90,7 +114,7 @@ public final class Distributor extends Player{
     }
 
     public void payCosts() {
-        int costs = infrastructureCosts + productionCosts * contractList.size();
+        int costs = infrastructureCosts + productionCosts * noClients;
 
         if (costs > budget) {
             goBankrupt();
@@ -105,22 +129,33 @@ public final class Distributor extends Player{
         isBankrupt = true;
 
         for(Contract contract : contractList) {
-            contract.terminate();
+            terminateContract(contract);
         }
     }
 
     @Override
     public void takeTurn() {
-        // not sure how this would fit in
+        if (!isBankrupt) {
+            payCosts();
+        }
     }
 
     @Override
     public void update() {
-        // update all contracts
-        for (Contract contract : contractList) {
-            contract.update();
+        if (!isBankrupt) {
+            noClients = contractList.size();
+            computePrice();
         }
+    }
 
-        // aici cand ne vin monthly updates
+    @Override
+    public String toString() {
+        return "Distributor{" +
+                "id=" + id +
+                ", budget=" + budget +
+                ", isBankrupt=" + isBankrupt +
+                ", infrastructureCosts=" + infrastructureCosts +
+                ", productionCosts=" + productionCosts +
+                '}';
     }
 }

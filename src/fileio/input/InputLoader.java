@@ -23,6 +23,10 @@ public final class InputLoader {
 
     private InputData inputData;
 
+    public InputData getInputData() {
+        return inputData;
+    }
+
     public InputLoader(final String inputPath) {
         this.inputPath = inputPath;
         inputFile = new File(inputPath);
@@ -71,7 +75,7 @@ public final class InputLoader {
             args[1] = String.valueOf(consumerInputData.getInitialBudget());
             args[2] = String.valueOf(consumerInputData.getMonthlyIncome());
 
-            Consumers.addToDB((Consumer) consumerFactory.create(args));
+            Consumers.getInstance().addToDB((Consumer) consumerFactory.create(args));
         }
 
         // Distributors
@@ -83,7 +87,7 @@ public final class InputLoader {
             args[3] = String.valueOf(distributorInputData.getInitialInfrastructureCost());
             args[4] = String.valueOf(distributorInputData.getInitialProductionCost());
 
-            Distributors.addToDB((Distributor) distributorFactory.create(args));
+            Distributors.getInstance().addToDB((Distributor) distributorFactory.create(args));
         }
     }
 }

@@ -40,11 +40,16 @@ public final class Consumer extends Player {
     }
 
     public void pickDistributor() {
+        // Already has a contract => nothing to do
+        if (currContract != null) {
+            return;
+        }
+
         // sort distributors by price
         Comparator<Distributor> distributorComp = Comparator.comparing(Distributor::getPrice);
 
         // pick distributor with lowest price
-        currDistributor = Distributors.getDistributorList().stream()
+        currDistributor = Distributors.getInstance().getDistributorList().stream()
                         .sorted(distributorComp)
                         .collect(Collectors.toList()).get(0);
 
@@ -52,31 +57,57 @@ public final class Consumer extends Player {
         currDistributor.assignContract(this);
     }
 
-    public void payOverdue() {
-        int overdue = currContract.getOverdue();
-
-        if (overdue > budget) {
-            goBankrupt();
-            return;
-        }
-
-        currDistributor.collectPayment(overdue);
-        currContract.clearOverdue();
-    }
+//    public void payOverdue() {
+//        int overdue = currContract.getOverdue();
+//
+//        // No overdue => nothing to do here
+//        if (overdue == 0) {
+//            return;
+//        }
+//
+//        if (overdue > budget) {
+//            goBankrupt();
+//            return;
+//        }
+//
+//        currDistributor.collectPayment(overdue);
+//        budget -= overdue;
+//        currContract.clearOverdue();
+//    }
 
     public void payCurrentBill() {
+        // Normal bill
         int bill = currContract.getPrice();
+
+        // Add overdue if existent
+        int overdue = currContract.getOverdue();
+        if (overdue > 0) {
+            bill += overdue;
+        }
 
         // Not able to pay: add to overdue
         if (bill > budget) {
-            int overdue = Math.toIntExact(Math.round(Math.floor(1.2 * bill)));
-            currContract.setOverdue(overdue);
+            /*
+             Already has an overdue and cannot pay
+             for the second month in a row => bankrupt
+             */
+            if (overdue > 0) {
+                goBankrupt();
+                return;
+            }
+
+            // Has no previous overdue && cannot pay current bill => set overdue
+            currContract.setOverdue(Math.toIntExact(Math.round(Math.floor(1.2 * bill))));
             return;
         }
 
         // Able to pay
         currDistributor.collectPayment(bill);
         budget -= bill;
+
+        if (overdue > 0) {
+            currContract.clearOverdue();
+        }
     }
 
     @Override
@@ -87,9 +118,26 @@ public final class Consumer extends Player {
 
     @Override
     public void takeTurn() {
-
+        if (!isBankrupt) {
+            pickDistributor();
+            payCurrentBill();
+        }
     }
 
     @Override
-    public void update() { budget += monthlyIncome; }
+    public void update() {
+        if (!isBankrupt) {
+            budget += monthlyIncome;
+        }
+    }
+
+    @Override
+    public String toString() {
+        return "Consumer{" +
+                "id=" + id +
+                ", isBankrupt=" + isBankrupt +
+                ", budget=" + budget +
+                ", currContract=" + currContract +
+                '}';
+    }
 }
