@@ -1,0 +1,101 @@
+# Proiect POO - Etapa 1 - Sistem Energetic
+
+Nume: Radu-Stefan Minea
+Serie: CA
+Grupa: 324CA
+Timp petrecut pe tema: ~ 5 zile
+
+===============================================================================
+## Relatiile intre clase
+
+* Player (Abstract Class) -> Consumer, Distributor
+
+Am anticipat ca in etapa viitoare vor exista mai multe tipuri de jucatori
+(autoritati, producatori)
+
+    - Consumer: agrega un Contract si un Distributor. De ce?
+        > Atunci cand efectueaza plati, sa nu mai fie nevoie sa-si caute
+        Distributorul in baza de date
+        > Atunci cand nu poate plati intr-o luna si trebuie sa marcheze
+        faptul ca ramane cu datorie (field-ul overdue din Contract), sa
+        nu mai fie nevoie sa-si caute contractul prin toate contractele
+        Distributor-ului
+
+    - Distributor: agrega o lista de Contracte, dar retine si un camp noClients
+        > Contractele: Distributorul poate dizolva contracte (metoda
+        terminateContracts), pentru ca atunci cand un contract este dizolvat,
+        trebuie:
+            + Sa fie scos din lista de contracte a Distributor-ului
+            + Customer-ul sa fie notificat ca nu mai are contract
+            (currContract = null)
+        > noClients: se leaga de situaita in care chiar daca unui client i-a
+        expirat contractul luna trecuta, el tot este considerat client pentru
+        Distributorul respectiv
+            + noClients este folosit pentru a calcula costurile ce ii revin
+            Distributor-ului la finalul rundei
+                - La inceputul rundei, noClients nu ia in considerare
+                contractele ce au expirat luna trecuta
+                - Pe parcursul rundei, noClients este actualizat atunci cand
+                clientii (re)semneaza cu un Distributor
+
+
+* AbstractContract (Abstract Class) -> Contract
+
+Am intuit ca in etapa viitoare pot exista mai multe tipuri de contracte (intre
+producatori si Distributori, de exemplu)
+
+    - Contract: contine field-ul overdue (= daca Consumer-ul are datorie)
+
+* Databases
+    - Agrega o lista de Consumer-i si, respectiv, o lista de Distrubutori
+        > Consumers
+        > Distributors
+    - Bazele de date sunt apelate in situatia in care se efectueaza operatii pe
+     toti Player-ii:
+        > La incarcarea si descarcarea datelor (load input, upload output)
+        > In game logic: updatePlayers()
+
+===============================================================================
+## Logica programului
+
+* Game.play: pentru fiecare runda:
+    - endGameCheck:         Verifica daca jocul mai poate fi jucat
+    - applyMonthlyUpdates:  Aplica monthlyUpdates (pentru rundele 1+)
+    - updatePlayers:        Actualizeaza starea jucatorilor
+    - takeTurns:            Fiecare jucator isi indeplineste sarcinile
+    - updateElements:       Actualizeaza starea elementelor (contractelor)
+
+===============================================================================
+## Folosire Design Patterns
+
+* Singleton
+
+Folosit pentru a pastra o singura instanta a bazelor de date. Jocul nu poate
+folosi doua baze de date dinstincte de Playeri in acelasi timp
+
+    - Am folosit Singleton pentru:
+        > Consumers
+        > Distributors
+
+* Factory
+
+Folosit pentru a incapsula crearea de Playeri si Contracte noi
+
+    - AbstractContract -> Contract:
+        > Apelat in crearea de noi contracte (atunci cand un Consumer semneaza
+        cu un Distributor)
+    - Player -> Consumer, Distributor
+        > Apelat in crearea de noi Playeri (in adaugarea de noi entry-uri in
+        bazele de date)
+
+===============================================================================
+## Limitari
+
+* Databases:
+    - Puteam unifica Consumers si Distributors intr-o clasa Players care sa
+    agrege o lista de Player-i
+
+* Game: o puteam sparge in:
+    - GameEngine: sa contina doar driver code-ul (metoda play)
+    - RoundEngine: sa contina toate cele necesare desfasurarii unei runde
+    (metodele de update, mecanismul de turn-taking)
