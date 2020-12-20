@@ -1,10 +1,9 @@
 package game.player;
 
 public abstract class Player {
-    // TODO: FIX: REPLACE WITH PRIVATE.
-    protected int id;
-    protected int budget;
-    protected boolean isBankrupt;
+    private int id;
+    private int budget;
+    private boolean isBankrupt;
 
     public Player(int id, int budget) {
         this.id = id;
@@ -28,11 +27,11 @@ public abstract class Player {
         this.budget = budget;
     }
 
-    public boolean isBankrupt() {
+    public boolean getIsBankrupt() {
         return isBankrupt;
     }
 
-    public void setBankrupt(boolean bankrupt) {
+    public void setIsBankrupt(boolean bankrupt) {
         isBankrupt = bankrupt;
     }
 

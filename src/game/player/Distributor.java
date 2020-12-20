@@ -1,11 +1,11 @@
 package game.player;
 
 import game.element.Contract;
+import game.factory.element.AbstractContractFactory;
+import game.factory.element.ContractFactory;
 
 import java.util.ArrayList;
-import java.util.Iterator;
 import java.util.List;
-import java.util.stream.Collectors;
 
 public final class Distributor extends Player{
     private List<Contract> contractList;
@@ -14,7 +14,6 @@ public final class Distributor extends Player{
     private int contractLength;
     private int infrastructureCosts;
     private int productionCosts;
-    private int profit;
 
     public Distributor(int id,
                        int budget,
@@ -31,14 +30,14 @@ public final class Distributor extends Player{
 
     public void computePrice() {
         // Compute profit
-        profit = Math.toIntExact(Math.round(Math.floor(0.2 * productionCosts)));
+        int profit = Math.toIntExact(Math.round(Math.floor(0.2 * productionCosts)));
 
         // Compute new price
         if (contractList.isEmpty()) {
             price = infrastructureCosts + productionCosts + profit;
         } else {
             price = Math.toIntExact(Math.round(Math.floor(
-                    infrastructureCosts / contractList.size())
+                    (double) infrastructureCosts / contractList.size())
                     + productionCosts
                     + profit));
         }
@@ -85,47 +84,53 @@ public final class Distributor extends Player{
     }
 
     public Contract generateContract(Consumer consumer) {
-        //TODO: replace with contract factory, later on
-        return new Contract(id, consumer.getId(), price, contractLength);
+        AbstractContractFactory contractFactory = new ContractFactory();
+
+        String[] args = new String[4];
+        args[0] = String.valueOf(getId());
+        args[1] = String.valueOf(consumer.getId());
+        args[2] = String.valueOf(price);
+        args[3] = String.valueOf(contractLength);
+
+        return (Contract) contractFactory.create(args);
     }
 
     public void assignContract(Consumer consumer) {
-        // generate contract for him
+        // Generate contract
         Contract currContract = generateContract(consumer);
-        // give it to him
+        // Give contract to customer
         consumer.setCurrContract(currContract);
-        // write to the distributors books
+        // Write to the distributor's contract record
         contractList.add(currContract);
         noClients++;
     }
 
     public void terminateContract(Contract contract) {
-        // terminate contract
         contract.terminate();
-        // write off this guy's books
+        // Writing off the distributor's record
         contractList.remove(contract);
 
-        // NOT modifying noClients here.
-        // noClients at start of round needed for payCosts.
+        /*
+         NOT modifying noClients here.
+         noClients at start of round needed for payCosts.
+         */
     }
 
-    public void collectPayment(int payment) {
-        budget += payment;
-    }
+    public void collectPayment(int payment) { setBudget(getBudget() + payment); }
 
     public void payCosts() {
         int costs = infrastructureCosts + productionCosts * noClients;
 
-        budget -= costs;
+        setBudget(getBudget() - costs);
 
-        if (budget < 0) {
+        if (getBudget() < 0) {
             goBankrupt();
         }
     }
 
     @Override
     public void goBankrupt() {
-        isBankrupt = true;
+        setIsBankrupt(true);
 
         List<Contract> dissolvedContracts = contractList;
         dissolvedContracts.forEach(Contract::terminate);
@@ -133,7 +138,7 @@ public final class Distributor extends Player{
 
     @Override
     public void takeTurn() {
-        if (!isBankrupt) {
+        if (!getIsBankrupt()) {
             payCosts();
         }
     }
@@ -141,14 +146,14 @@ public final class Distributor extends Player{
     public void updateContractList() {
         List<Contract> expiredContracts = new ArrayList<>();
 
-        // fetching expired contracts
+        // Fetching expired contracts
         for (Contract contract : getContractList()) {
             if (contract.getRemContractMonths() == 0 && contract.getOverdue() == 0) {
                 expiredContracts.add(contract);
             }
         }
 
-        // removing expired contracts
+        // Removing expired contracts
         for (Contract expiredContract : expiredContracts) {
             terminateContract(expiredContract);
         }
@@ -156,24 +161,11 @@ public final class Distributor extends Player{
 
     @Override
     public void update() {
-        if (!isBankrupt) {
-            // price
+        if (!getIsBankrupt()) {
             computePrice();
-            // contract list
             updateContractList();
             // no clients: excluding those whose contracts expired this month
             noClients = contractList.size();
         }
-    }
-
-    @Override
-    public String toString() {
-        return "Distributor{" +
-                "id=" + id +
-                ", budget=" + budget +
-                ", isBankrupt=" + isBankrupt +
-                ", infrastructureCosts=" + infrastructureCosts +
-                ", productionCosts=" + productionCosts +
-                '}';
     }
 }

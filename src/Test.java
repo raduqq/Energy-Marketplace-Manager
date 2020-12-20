@@ -1,5 +1,3 @@
-package main;
-
 import checker.Checkstyle;
 import com.fasterxml.jackson.databind.ObjectMapper;
 
@@ -223,7 +221,8 @@ public final class Test {
     }
 
     private static void preTestCleanUp() {
-        TEST_OUT_FILE.delete();
+        boolean result = TEST_OUT_FILE.delete();
+        assert result;
     }
 
     private static void printMessage(
@@ -256,7 +255,7 @@ public final class Test {
             }
         }
 
-        printMessage(testFileName, "main.Test score not found. Skipping test...");
+        printMessage(testFileName, "Test score not found. Skipping test...");
         return 0;
     }
 }

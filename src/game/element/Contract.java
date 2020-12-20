@@ -23,23 +23,13 @@ public final class Contract extends AbstractContract{
 
     @Override
     public void terminate() {
-        Consumer currConsumer = Consumers.getInstance().findConsumerByID(beneficiaryID);
+        Consumer currConsumer = Consumers.getInstance().findConsumerByID(getBeneficiaryID());
         if (currConsumer != null) {
             currConsumer.setCurrContract(null);
         }
     }
 
     public void update() {
-        remContractMonths--;
-    }
-
-    @Override
-    public String toString() {
-        return "Contract{" +
-                "overdue=" + overdue +
-                ", issuerID= " + issuerID +
-                ", price=" + price +
-                ", remContractMonths=" + remContractMonths +
-                '}';
+        setRemContractMonths(getRemContractMonths() - 1);
     }
 }

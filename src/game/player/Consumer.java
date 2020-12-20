@@ -45,21 +45,23 @@ public final class Consumer extends Player {
             return;
         }
 
-        // sort distributors by price
+        // Sort distributors by price
         Comparator<Distributor> distributorComp = Comparator.comparing(Distributor::getPrice);
 
-        // pick distributor with lowest price
+        // Pick distributor with lowest price
         currDistributor = Distributors.getInstance().getDistributorList().stream()
-                        .filter(distributor -> !distributor.isBankrupt)
+                        .filter(distributor -> !distributor.getIsBankrupt())
                         .sorted(distributorComp)
                         .collect(Collectors.toList()).get(0);
 
-        // assign contract to consumer
+        // Assign contract to consumer
         currDistributor.assignContract(this);
     }
 
-    // Edge case: contract has run down, therefore it doesn't generate new bills
-    // => only need to pay the last one, if it has any overdue
+    /*
+    Edge case: contract has run down, therefore it doesn't generate new bills
+    => only need to pay the last one, if it has any overdue
+     */
     public void resolvePastArrangement() {
         if (currContract == null) {
             return;
@@ -68,7 +70,7 @@ public final class Consumer extends Player {
         if (currContract.getRemContractMonths() == 0 && currContract.getOverdue() != 0) {
             payCurrentBill();
 
-            if (!isBankrupt) {
+            if (!getIsBankrupt()) {
                 currDistributor.terminateContract(currContract);
             }
         }
@@ -85,7 +87,7 @@ public final class Consumer extends Player {
         }
 
         // Not able to pay: add to overdue
-        if (bill > budget) {
+        if (bill > getBudget()) {
             /*
              Already has an overdue and cannot pay
              for the second month in a row => bankrupt
@@ -102,7 +104,7 @@ public final class Consumer extends Player {
 
         // Able to pay
         currDistributor.collectPayment(bill);
-        budget -= bill;
+        setBudget(getBudget() - bill);
 
         // Had overdue, but paid it
         if (overdue > 0) {
@@ -112,17 +114,17 @@ public final class Consumer extends Player {
 
     @Override
     public void goBankrupt() {
-        isBankrupt = true;
+        setIsBankrupt(true);
         currDistributor.terminateContract(currContract);
     }
 
     @Override
     public void takeTurn() {
-        if (!isBankrupt) {
+        if (!getIsBankrupt()) {
             resolvePastArrangement();
         }
 
-        if (!isBankrupt) {
+        if (!getIsBankrupt()) {
             pickDistributor();
             payCurrentBill();
         }
@@ -130,18 +132,8 @@ public final class Consumer extends Player {
 
     @Override
     public void update() {
-        if (!isBankrupt) {
-            budget += monthlyIncome;
+        if (!getIsBankrupt()) {
+            setBudget(getBudget() + monthlyIncome);
         }
-    }
-
-    @Override
-    public String toString() {
-        return "Consumer{" +
-                "id=" + id +
-                ", isBankrupt=" + isBankrupt +
-                ", budget=" + budget +
-                ", currContract=" + currContract +
-                '}';
     }
 }

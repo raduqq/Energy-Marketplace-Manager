@@ -5,9 +5,9 @@ import java.util.List;
 
 public class OutputData {
     public static class ConsumerOutputData {
-        int id;
-        boolean isBankrupt;
-        int budget;
+        private int id;
+        private boolean isBankrupt;
+        private int budget;
 
         public ConsumerOutputData(int id, boolean isBankrupt, int budget) {
             this.id = id;
@@ -42,9 +42,9 @@ public class OutputData {
 
     public static class DistributorOutputData {
         public static class ContractOutputData {
-            int consumerId;
-            int price;
-            int remainedContractMonths;
+            private int consumerId;
+            private int price;
+            private int remainedContractMonths;
 
             public ContractOutputData(int consumerId, int price, int remainedContractMonths) {
                 this.consumerId = consumerId;
@@ -77,10 +77,10 @@ public class OutputData {
             }
         }
 
-        int id;
-        int budget;
-        boolean isBankrupt;
-        List<ContractOutputData> contracts;
+        private int id;
+        private int budget;
+        private boolean isBankrupt;
+        private List<ContractOutputData> contracts;
 
         public DistributorOutputData(int id, int budget, boolean isBankrupt, List<ContractOutputData> contracts) {
             this.id = id;

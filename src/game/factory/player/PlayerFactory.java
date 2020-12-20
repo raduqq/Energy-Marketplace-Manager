@@ -1,4 +1,4 @@
-package game.factory;
+package game.factory.player;
 
 import game.player.Player;
 

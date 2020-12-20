@@ -1,6 +1,6 @@
 package game.database;
 
-import game.player.Consumer;
+import fileio.input.MonthlyUpdateInputData;
 import game.player.Distributor;
 
 import java.util.ArrayList;
@@ -9,20 +9,14 @@ import java.util.List;
 public final class Distributors {
     private static Distributors instance;
 
-    private static List<Distributor> distributorList;
+    private final List<Distributor> distributorList;
 
     private Distributors() { distributorList = new ArrayList<>(); }
 
-    static {
-        instance = new Distributors();
-    }
+    static { instance = new Distributors(); }
 
     public static Distributors getInstance() {
         return instance;
-    }
-
-    public static void reset() {
-        instance = new Distributors();
     }
 
     public List<Distributor> getDistributorList() {
@@ -30,7 +24,7 @@ public final class Distributors {
     }
 
     public void addToDB(Distributor distributor) {
-        Distributors.distributorList.add(distributor);
+        distributorList.add(distributor);
     }
 
     public Distributor findDistributorByID (int id) {
@@ -41,5 +35,19 @@ public final class Distributors {
         }
 
         return  null;
+    }
+
+    public void update(List<MonthlyUpdateInputData.CostChangesInputData> costChanges) {
+        for (MonthlyUpdateInputData.CostChangesInputData costChange : costChanges) {
+            Distributor currDistributor = Distributors.getInstance().findDistributorByID(costChange.getId());
+            assert currDistributor != null;
+
+            currDistributor.setInfrastructureCosts(costChange.getInfrastructureCost());
+            currDistributor.setProductionCosts(costChange.getProductionCost());
+        }
+    }
+
+    public void reset() {
+        instance = new Distributors();
     }
 }

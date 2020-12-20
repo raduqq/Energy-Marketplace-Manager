@@ -1,10 +1,10 @@
 package game.element;
 
 public abstract class AbstractContract {
-    protected int beneficiaryID;
-    protected int issuerID;
-    protected int price;
-    protected int remContractMonths;
+    private int beneficiaryID;
+    private int issuerID;
+    private int price;
+    private int remContractMonths;
 
     public AbstractContract(int issuerID, int beneficiaryID, int price, int remContractMonths) {
         this.issuerID = issuerID;

@@ -1,10 +1,9 @@
-package game.factory;
+package game.factory.player;
 
 import game.player.Consumer;
-import game.player.Distributor;
 import game.player.Player;
 
-public class ConsumerFactory implements PlayerFactory{
+public class ConsumerFactory implements PlayerFactory {
     @Override
     public Player create(String[] args) {
         int id = Integer.parseInt(args[0]);

@@ -29,7 +29,7 @@ public final class OutputWriter {
             outputData.getConsumers()
                         .add(new OutputData
                                 .ConsumerOutputData(consumer.getId(),
-                                                    consumer.isBankrupt(),
+                                                    consumer.getIsBankrupt(),
                                                     consumer.getBudget()));
         }
 
@@ -51,7 +51,7 @@ public final class OutputWriter {
                         .add(new OutputData.DistributorOutputData(
                             distributor.getId(),
                             distributor.getBudget(),
-                            distributor.isBankrupt(),
+                            distributor.getIsBankrupt(),
                             contractOutputDataList));
         }
     }

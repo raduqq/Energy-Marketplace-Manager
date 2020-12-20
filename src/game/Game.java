@@ -1,54 +1,43 @@
 package game;
 
-import fileio.input.ConsumerInputData;
 import fileio.input.MonthlyUpdateInputData;
-import fileio.input.MonthlyUpdateInputData.CostChangesInputData;
 import game.database.Consumers;
 import game.database.Distributors;
 import game.element.Contract;
 import game.player.Consumer;
 import game.player.Distributor;
 
-import java.util.ArrayList;
 import java.util.List;
 
-// TODO: scoate metodele statice!
 public final class Game {
     private static Game instance;
+    private int numberOfTurns;
 
-    // puteai sa agregi aici o lista de players si terminai situatia
-
-    private static int numberOfTurns;
-
-    // de inclus si Game.reset();
     static { instance = new Game(); }
 
-    public static void reset() {
+    public void reset() {
         instance = new Game();
 
-        Consumers.reset();
-        Distributors.reset();
-
+        Consumers.getInstance().reset();
+        Distributors.getInstance().reset();
     }
 
     public static Game getInstance() { return instance; }
 
-    public static int getNumberOfTurns() {
+    public int getNumberOfTurns() {
         return numberOfTurns;
     }
 
-    public static void setNumberOfTurns(int numberOfTurns) {
-        Game.numberOfTurns = numberOfTurns;
+    public void setNumberOfTurns(int numberOfTurns) {
+        this.numberOfTurns = numberOfTurns;
     }
 
-    public static void updatePlayers() { // la toti playerii
-        // consumeri -> intra leafa
+    public void updatePlayers() {
         Consumers.getInstance().getConsumerList().forEach(Consumer::update);
-        // distributori -> new prices + contracts running down
         Distributors.getInstance().getDistributorList().forEach(Distributor::update);
     }
 
-    public static void updateElements() { // contractele
+    public void updateElements() {
         for (Distributor distributor : Distributors.getInstance().getDistributorList()) {
             for (Contract contract : distributor.getContractList()) {
                 contract.update();
@@ -56,79 +45,49 @@ public final class Game {
         }
     }
 
-    public static void applyMonthlyUpdates(List<MonthlyUpdateInputData> monthlyUpdates) {
+    public void applyMonthlyUpdates(List<MonthlyUpdateInputData> monthlyUpdates) {
         // Fetch current update
         MonthlyUpdateInputData currUpdate = monthlyUpdates.get(0);
 
-        // TODO: player factory
-        // add new consumers => TODO: Consumers.update(newConsumers) in loc de asta
-        for (ConsumerInputData consumerInputData : currUpdate.getNewConsumers()) {
-            Consumers.getInstance().addToDB(new Consumer(consumerInputData.getId(),
-                                            consumerInputData.getInitialBudget(),
-                                            consumerInputData.getMonthlyIncome()));
-        }
-
-        // update distributorii cu pricina => TODO: Distributors.update(costsChanges) in loc de asta
-        for (CostChangesInputData costChangesInputData : currUpdate.getCostsChanges()) {
-            Distributor currDistributor = Distributors.getInstance().findDistributorByID(costChangesInputData.getId());
-            assert currDistributor != null;
-
-            currDistributor.setInfrastructureCosts(costChangesInputData.getInfrastructureCost());
-            currDistributor.setProductionCosts(costChangesInputData.getProductionCost());
-        }
+        // Updating databases
+        Consumers.getInstance().update(currUpdate.getNewConsumers());
+        Distributors.getInstance().update(currUpdate.getCostsChanges());
 
         // Done with current update
         monthlyUpdates.remove(0);
     }
 
-    public static void takeTurns() {
-        // for debugging
-        for (Consumer consumer : Consumers.getInstance().getConsumerList()) {
-            consumer.takeTurn();
-        }
-
-        for (Distributor distributor : Distributors.getInstance().getDistributorList()) {
-            distributor.takeTurn();
-        }
+    public void takeTurns() {
+        Consumers.getInstance().getConsumerList().forEach(Consumer::takeTurn);
+        Distributors.getInstance().getDistributorList().forEach(Distributor::takeTurn);
     }
 
-    // Checks if game is still playable (i.e. there are still functioning distributors
-    public static boolean endGameCheck() {
-        int workingDistributors = 0;
+    // Checks if game is still playable (i.e. there are still functioning distributors)
+    public boolean endGameCheck() {
+        int stillAlive = (int) Distributors.getInstance()
+                            .getDistributorList().stream()
+                            .filter(distributor -> !distributor.getIsBankrupt())
+                            .count();
 
-        for (Distributor distributor : Distributors.getInstance().getDistributorList()) {
-            if (!distributor.isBankrupt()) {
-                workingDistributors++;
-            }
-        }
-
-        if (workingDistributors == 0) {
-            return true;
-        }
-
-        return false;
+        return stillAlive == 0;
     }
 
-    public static void play(List<MonthlyUpdateInputData> monthlyUpdates) {
+    public void play(List<MonthlyUpdateInputData> monthlyUpdates) {
         for (int i = 0; i <= numberOfTurns; i++) {
+            // Playability check
             if (endGameCheck()) {
                 return;
             }
 
+            // Setup round (round 0) doesn't get updates
             if (i > 0) {
                 applyMonthlyUpdates(monthlyUpdates);
             }
 
+            // Game logic of each round
             updatePlayers();
             takeTurns();
             updateElements();
         }
-    }
-
-    @Override
-    public String toString() {
-        return "Game{" +
-                "numberOfTurns=" + numberOfTurns +
-                '}';
     }
 }

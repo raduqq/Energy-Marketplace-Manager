@@ -4,9 +4,9 @@ import com.fasterxml.jackson.databind.ObjectMapper;
 import game.Game;
 import game.database.Consumers;
 import game.database.Distributors;
-import game.factory.ConsumerFactory;
-import game.factory.DistributorFactory;
-import game.factory.PlayerFactory;
+import game.factory.player.ConsumerFactory;
+import game.factory.player.DistributorFactory;
+import game.factory.player.PlayerFactory;
 import game.player.Consumer;
 import game.player.Distributor;
 
@@ -66,7 +66,7 @@ public final class InputLoader {
         PlayerFactory distributorFactory = new DistributorFactory();
 
         // Game
-        Game.setNumberOfTurns(inputData.getNumberOfTurns());
+        Game.getInstance().setNumberOfTurns(inputData.getNumberOfTurns());
 
         // Consumers
         for (ConsumerInputData consumerInputData : inputData.getInitialData().getConsumers()) {
