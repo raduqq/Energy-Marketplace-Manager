@@ -1,5 +1,6 @@
 package game.player;
 
+import common.Constants;
 import game.database.Distributors;
 import game.element.Contract;
 
@@ -11,7 +12,9 @@ public final class Consumer extends Player {
     private Contract currContract;
     private Distributor currDistributor;
 
-    public Consumer(int id, int budget, int monthlyIncome) {
+    public Consumer(final int id,
+                    final int budget,
+                    final int monthlyIncome) {
         super(id, budget);
         this.monthlyIncome = monthlyIncome;
         this.currContract = null;
@@ -21,24 +24,18 @@ public final class Consumer extends Player {
         return monthlyIncome;
     }
 
-    public void setMonthlyIncome(int monthlyIncome) {
+    public void setMonthlyIncome(final int monthlyIncome) {
         this.monthlyIncome = monthlyIncome;
     }
 
-    public Contract getCurrContract() {
-        return currContract;
-    }
-
-    public void setCurrContract(Contract currContract) {
+    public void setCurrContract(final Contract currContract) {
         this.currContract = currContract;
     }
 
-    public Distributor getCurrDistributor() { return currDistributor; }
-
-    public void setCurrDistributor(Distributor currDistributor) {
-        this.currDistributor = currDistributor;
-    }
-
+    /**
+     * Picks distributor at the beginning of the road
+     * Signs contract with picked distributor
+     */
     public void pickDistributor() {
         // Already has a contract => nothing to do
         if (currContract != null) {
@@ -50,6 +47,7 @@ public final class Consumer extends Player {
 
         // Pick distributor with lowest price
         currDistributor = Distributors.getInstance().getDistributorList().stream()
+                        // Filters out bankrupt distributors
                         .filter(distributor -> !distributor.getIsBankrupt())
                         .sorted(distributorComp)
                         .collect(Collectors.toList()).get(0);
@@ -58,9 +56,9 @@ public final class Consumer extends Player {
         currDistributor.assignContract(this);
     }
 
-    /*
-    Edge case: contract has run down, therefore it doesn't generate new bills
-    => only need to pay the last one, if it has any overdue
+    /**
+     * Edge case: contract has run down, therefore it doesn't generate new bills
+     * => only need to pay overdue bill (if existent)
      */
     public void resolvePastArrangement() {
         if (currContract == null) {
@@ -76,6 +74,9 @@ public final class Consumer extends Player {
         }
     }
 
+    /**
+     * Pays current bill (along with overdue)
+     */
     public void payCurrentBill() {
         // Normal bill
         int bill = currContract.getPrice();
@@ -98,7 +99,10 @@ public final class Consumer extends Player {
             }
 
             // Has no previous overdue && cannot pay current bill => set overdue
-            currContract.setOverdue(Math.toIntExact(Math.round(Math.floor(1.2 * bill))));
+            currContract.setOverdue(Math
+                                    .toIntExact(
+                                            Math.round(
+                                                    Math.floor(Constants.OVERDUE_FACTOR * bill))));
             return;
         }
 

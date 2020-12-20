@@ -1,6 +1,7 @@
 package fileio.input;
 
 import com.fasterxml.jackson.databind.ObjectMapper;
+import common.Constants;
 import game.Game;
 import game.database.Consumers;
 import game.database.Distributors;
@@ -30,10 +31,6 @@ public final class InputLoader {
     public InputLoader(final String inputPath) {
         this.inputPath = inputPath;
         inputFile = new File(inputPath);
-    }
-
-    public String getInputPath() {
-        return inputPath;
     }
 
     /**
@@ -69,25 +66,39 @@ public final class InputLoader {
         Game.getInstance().setNumberOfTurns(inputData.getNumberOfTurns());
 
         // Consumers
-        for (ConsumerInputData consumerInputData : inputData.getInitialData().getConsumers()) {
-            String[] args = new String[3];
-            args[0] = String.valueOf(consumerInputData.getId());
-            args[1] = String.valueOf(consumerInputData.getInitialBudget());
-            args[2] = String.valueOf(consumerInputData.getMonthlyIncome());
-
+        inputData.getInitialData().getConsumers().forEach(consumerInputData -> {
+            String[] args = new String[Constants.NO_CONSUMER_PARAM];
+            args[Constants.ZEROTH_ARG] = String
+                    .valueOf(consumerInputData
+                            .getId());
+            args[Constants.FIRST_ARG] = String
+                    .valueOf(consumerInputData
+                            .getInitialBudget());
+            args[Constants.SECOND_ARG] = String
+                    .valueOf(consumerInputData
+                            .getMonthlyIncome());
             Consumers.getInstance().addToDB((Consumer) consumerFactory.create(args));
-        }
+        });
 
         // Distributors
-        for (DistributorInputData distributorInputData : inputData.getInitialData().getDistributors()) {
-            String[] args = new String[5];
-            args[0] = String.valueOf(distributorInputData.getId());
-            args[1] = String.valueOf(distributorInputData.getInitialBudget());
-            args[2] = String.valueOf(distributorInputData.getContractLength());
-            args[3] = String.valueOf(distributorInputData.getInitialInfrastructureCost());
-            args[4] = String.valueOf(distributorInputData.getInitialProductionCost());
-
+        inputData.getInitialData().getDistributors().forEach(distributorInputData -> {
+            String[] args = new String[Constants.NO_DISTRIB_PARAM];
+            args[Constants.ZEROTH_ARG] = String
+                    .valueOf(distributorInputData
+                            .getId());
+            args[Constants.FIRST_ARG] = String
+                    .valueOf(distributorInputData
+                            .getInitialBudget());
+            args[Constants.SECOND_ARG] = String
+                    .valueOf(distributorInputData
+                            .getContractLength());
+            args[Constants.THIRD_ARG] = String
+                    .valueOf(distributorInputData
+                            .getInitialInfrastructureCost());
+            args[Constants.FOURTH_ARG] = String
+                    .valueOf(distributorInputData
+                            .getInitialProductionCost());
             Distributors.getInstance().addToDB((Distributor) distributorFactory.create(args));
-        }
+        });
     }
 }

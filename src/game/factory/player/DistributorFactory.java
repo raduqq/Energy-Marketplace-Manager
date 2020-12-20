@@ -1,16 +1,17 @@
 package game.factory.player;
 
+import common.Constants;
 import game.player.Distributor;
 import game.player.Player;
 
-public class DistributorFactory implements PlayerFactory{
+public final class DistributorFactory implements PlayerFactory {
     @Override
-    public Player create(String[] args) {
-        int id = Integer.parseInt(args[0]);
-        int budget = Integer.parseInt(args[1]);
-        int contractLength = Integer.parseInt(args[2]);
-        int infrastructureCosts = Integer.parseInt(args[3]);
-        int productionCosts = Integer.parseInt(args[4]);
+    public Player create(final String[] args) {
+        int id = Integer.parseInt(args[Constants.ZEROTH_ARG]);
+        int budget = Integer.parseInt(args[Constants.FIRST_ARG]);
+        int contractLength = Integer.parseInt(args[Constants.SECOND_ARG]);
+        int infrastructureCosts = Integer.parseInt(args[Constants.THIRD_ARG]);
+        int productionCosts = Integer.parseInt(args[Constants.FOURTH_ARG]);
 
         return new Distributor(id,
                 budget,

@@ -3,13 +3,15 @@ package fileio.output;
 import java.util.ArrayList;
 import java.util.List;
 
-public class OutputData {
-    public static class ConsumerOutputData {
+public final class OutputData {
+    public static final class ConsumerOutputData {
         private int id;
         private boolean isBankrupt;
         private int budget;
 
-        public ConsumerOutputData(int id, boolean isBankrupt, int budget) {
+        public ConsumerOutputData(final int id,
+                                  final boolean isBankrupt,
+                                  final int budget) {
             this.id = id;
             this.isBankrupt = isBankrupt;
             this.budget = budget;
@@ -19,7 +21,7 @@ public class OutputData {
             return id;
         }
 
-        public void setId(int id) {
+        public void setId(final int id) {
             this.id = id;
         }
 
@@ -27,7 +29,7 @@ public class OutputData {
             return isBankrupt;
         }
 
-        public void setIsBankrupt(boolean bankrupt) {
+        public void setIsBankrupt(final boolean bankrupt) {
             isBankrupt = bankrupt;
         }
 
@@ -35,18 +37,20 @@ public class OutputData {
             return budget;
         }
 
-        public void setBudget(int budget) {
+        public void setBudget(final int budget) {
             this.budget = budget;
         }
     }
 
-    public static class DistributorOutputData {
-        public static class ContractOutputData {
+    public static final class DistributorOutputData {
+        public static final class ContractOutputData {
             private int consumerId;
             private int price;
             private int remainedContractMonths;
 
-            public ContractOutputData(int consumerId, int price, int remainedContractMonths) {
+            public ContractOutputData(final int consumerId,
+                                      final int price,
+                                      final int remainedContractMonths) {
                 this.consumerId = consumerId;
                 this.price = price;
                 this.remainedContractMonths = remainedContractMonths;
@@ -56,7 +60,7 @@ public class OutputData {
                 return consumerId;
             }
 
-            public void setConsumerId(int consumerId) {
+            public void setConsumerId(final int consumerId) {
                 this.consumerId = consumerId;
             }
 
@@ -64,7 +68,7 @@ public class OutputData {
                 return price;
             }
 
-            public void setPrice(int price) {
+            public void setPrice(final int price) {
                 this.price = price;
             }
 
@@ -72,7 +76,7 @@ public class OutputData {
                 return remainedContractMonths;
             }
 
-            public void setRemainedContractMonths(int remainedContractMonths) {
+            public void setRemainedContractMonths(final int remainedContractMonths) {
                 this.remainedContractMonths = remainedContractMonths;
             }
         }
@@ -82,7 +86,10 @@ public class OutputData {
         private boolean isBankrupt;
         private List<ContractOutputData> contracts;
 
-        public DistributorOutputData(int id, int budget, boolean isBankrupt, List<ContractOutputData> contracts) {
+        public DistributorOutputData(final int id,
+                                     final int budget,
+                                     final boolean isBankrupt,
+                                     final List<ContractOutputData> contracts) {
             this.id = id;
             this.budget = budget;
             this.isBankrupt = isBankrupt;
@@ -93,7 +100,7 @@ public class OutputData {
             return budget;
         }
 
-        public void setBudget(int budget) {
+        public void setBudget(final int budget) {
             this.budget = budget;
         }
 
@@ -101,7 +108,7 @@ public class OutputData {
             return isBankrupt;
         }
 
-        public void setIsBankrupt(boolean bankrupt) {
+        public void setIsBankrupt(final boolean bankrupt) {
             isBankrupt = bankrupt;
         }
 
@@ -109,7 +116,7 @@ public class OutputData {
             return contracts;
         }
 
-        public void setContracts(List<ContractOutputData> contracts) {
+        public void setContracts(final List<ContractOutputData> contracts) {
             this.contracts = contracts;
         }
 
@@ -117,7 +124,7 @@ public class OutputData {
             return id;
         }
 
-        public void setId(int id) {
+        public void setId(final int id) {
             this.id = id;
         }
     }
@@ -134,7 +141,7 @@ public class OutputData {
         return consumers;
     }
 
-    public void setConsumers(List<ConsumerOutputData> consumers) {
+    public void setConsumers(final List<ConsumerOutputData> consumers) {
         this.consumers = consumers;
     }
 
@@ -142,7 +149,7 @@ public class OutputData {
         return distributors;
     }
 
-    public void setDistributors(List<DistributorOutputData> distributors) {
+    public void setDistributors(final List<DistributorOutputData> distributors) {
         this.distributors = distributors;
     }
 }

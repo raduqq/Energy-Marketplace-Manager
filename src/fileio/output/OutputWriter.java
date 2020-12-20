@@ -24,6 +24,9 @@ public final class OutputWriter {
         outputData = new OutputData();
     }
 
+    /**
+     * Transfers data from databases to an OutputData object
+     */
     public void transferData() {
         for (Consumer consumer : Consumers.getInstance().getConsumerList()) {
             outputData.getConsumers()
@@ -56,6 +59,9 @@ public final class OutputWriter {
         }
     }
 
+    /**
+     * Writes data from an OutputData object to file
+     */
     public void writeData() {
         ObjectMapper objectMapper = new ObjectMapper();
         ObjectWriter objectWriter = objectMapper.writer(new DefaultPrettyPrinter());
@@ -67,6 +73,9 @@ public final class OutputWriter {
         }
     }
 
+    /**
+     * Uploads data to output file
+     */
     public void uploadData() {
         transferData();
         writeData();

@@ -1,16 +1,16 @@
 package game.factory.element;
 
+import common.Constants;
 import game.element.AbstractContract;
 import game.element.Contract;
 
-public class ContractFactory implements AbstractContractFactory{
+public final class ContractFactory implements AbstractContractFactory {
     @Override
-    public AbstractContract create(String[] args) {
-        int issuerID = Integer.parseInt(args[0]);
-        int beneficiaryID = Integer.parseInt(args[1]);
-        int price = Integer.parseInt(args[2]);
-        int remContractMonths = Integer.parseInt(args[3]);
+    public AbstractContract create(final String[] args) {
+        int beneficiaryID = Integer.parseInt(args[Constants.ZEROTH_ARG]);
+        int price = Integer.parseInt(args[Constants.FIRST_ARG]);
+        int remContractMonths = Integer.parseInt(args[Constants.SECOND_ARG]);
 
-        return new Contract(issuerID, beneficiaryID, price, remContractMonths);
+        return new Contract(beneficiaryID, price, remContractMonths);
     }
 }

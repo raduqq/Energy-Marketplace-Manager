@@ -1,11 +1,18 @@
+import common.Constants;
 import fileio.input.InputLoader;
 import fileio.output.OutputWriter;
 import game.Game;
 
-public class Main {
-    public static void main(String[] args) {
-        String inputPath = args[0];
-        String outputPath = args[1];
+public final class Main {
+    private Main() {
+    }
+    /**
+     * Program entry point
+     * @param args input & output paths
+     */
+    public static void main(final String[] args) {
+        String inputPath = args[Constants.ZEROTH_ARG];
+        String outputPath = args[Constants.FIRST_ARG];
 
         // Loading input
         InputLoader inputLoader = new InputLoader(inputPath);

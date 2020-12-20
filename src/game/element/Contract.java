@@ -3,11 +3,13 @@ package game.element;
 import game.database.Consumers;
 import game.player.Consumer;
 
-public final class Contract extends AbstractContract{
+public final class Contract extends AbstractContract {
     private int overdue;
 
-    public Contract(int issuerID, int beneficiaryID, int price, int remContractMonths) {
-        super(issuerID, beneficiaryID, price, remContractMonths);
+    public Contract(final int beneficiaryID,
+                    final int price,
+                    final int remContractMonths) {
+        super(beneficiaryID, price, remContractMonths);
         overdue = 0;
     }
 
@@ -15,11 +17,16 @@ public final class Contract extends AbstractContract{
         return overdue;
     }
 
-    public void setOverdue(int overdue) {
+    public void setOverdue(final int overdue) {
         this.overdue = overdue;
     }
 
-    public void clearOverdue() { overdue = 0; }
+    /**
+     * Clears this contract's overdue
+     */
+    public void clearOverdue() {
+        overdue = 0;
+    }
 
     @Override
     public void terminate() {
@@ -29,6 +36,9 @@ public final class Contract extends AbstractContract{
         }
     }
 
+    /**
+     * Updates contract state each round
+     */
     public void update() {
         setRemContractMonths(getRemContractMonths() - 1);
     }

@@ -13,8 +13,13 @@ public final class Game {
     private static Game instance;
     private int numberOfTurns;
 
-    static { instance = new Game(); }
+    static {
+        instance = new Game();
+    }
 
+    /**
+     * Resets all game entities
+     */
     public void reset() {
         instance = new Game();
 
@@ -22,21 +27,31 @@ public final class Game {
         Distributors.getInstance().reset();
     }
 
-    public static Game getInstance() { return instance; }
+    public static Game getInstance() {
+        return instance;
+    }
 
     public int getNumberOfTurns() {
         return numberOfTurns;
     }
 
-    public void setNumberOfTurns(int numberOfTurns) {
+    public void setNumberOfTurns(final int numberOfTurns) {
         this.numberOfTurns = numberOfTurns;
     }
 
+    /**
+     * Updates the game's players
+     * Updates are done each round
+     */
     public void updatePlayers() {
         Consumers.getInstance().getConsumerList().forEach(Consumer::update);
         Distributors.getInstance().getDistributorList().forEach(Distributor::update);
     }
 
+    /**
+     * Updates the game's elements
+     * Updates are done each round
+     */
     public void updateElements() {
         for (Distributor distributor : Distributors.getInstance().getDistributorList()) {
             for (Contract contract : distributor.getContractList()) {
@@ -45,7 +60,11 @@ public final class Game {
         }
     }
 
-    public void applyMonthlyUpdates(List<MonthlyUpdateInputData> monthlyUpdates) {
+    /**
+     * Applying this month's updates
+     * @param monthlyUpdates to be applied
+     */
+    public void applyMonthlyUpdates(final List<MonthlyUpdateInputData> monthlyUpdates) {
         // Fetch current update
         MonthlyUpdateInputData currUpdate = monthlyUpdates.get(0);
 
@@ -57,12 +76,18 @@ public final class Game {
         monthlyUpdates.remove(0);
     }
 
+    /**
+     * All players take turns here
+     */
     public void takeTurns() {
         Consumers.getInstance().getConsumerList().forEach(Consumer::takeTurn);
         Distributors.getInstance().getDistributorList().forEach(Distributor::takeTurn);
     }
 
-    // Checks if game is still playable (i.e. there are still functioning distributors)
+    /**
+     * Checks if game is still playable (i.e. there are still functioning distributors)
+     * @return true if game is no longer playable
+     */
     public boolean endGameCheck() {
         int stillAlive = (int) Distributors.getInstance()
                             .getDistributorList().stream()
@@ -72,7 +97,11 @@ public final class Game {
         return stillAlive == 0;
     }
 
-    public void play(List<MonthlyUpdateInputData> monthlyUpdates) {
+    /**
+     * Simulates numberOfTurns rounds
+     * @param monthlyUpdates to be inserted every month
+     */
+    public void play(final List<MonthlyUpdateInputData> monthlyUpdates) {
         for (int i = 0; i <= numberOfTurns; i++) {
             // Playability check
             if (endGameCheck()) {

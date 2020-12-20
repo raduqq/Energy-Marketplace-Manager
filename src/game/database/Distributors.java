@@ -11,9 +11,13 @@ public final class Distributors {
 
     private final List<Distributor> distributorList;
 
-    private Distributors() { distributorList = new ArrayList<>(); }
+    private Distributors() {
+        distributorList = new ArrayList<>();
+    }
 
-    static { instance = new Distributors(); }
+    static {
+        instance = new Distributors();
+    }
 
     public static Distributors getInstance() {
         return instance;
@@ -23,11 +27,20 @@ public final class Distributors {
         return distributorList;
     }
 
-    public void addToDB(Distributor distributor) {
+    /**
+     * Adds distributor in the database
+     * @param distributor to be added
+     */
+    public void addToDB(final Distributor distributor) {
         distributorList.add(distributor);
     }
 
-    public Distributor findDistributorByID (int id) {
+    /**
+     * Finds distributor in database by its id
+     * @param id of distributor to be found
+     * @return distributor with given id
+     */
+    public Distributor findDistributorByID(final int id) {
         for (Distributor distributor : distributorList) {
             if (distributor.getId() == id) {
                 return distributor;
@@ -37,9 +50,14 @@ public final class Distributors {
         return  null;
     }
 
-    public void update(List<MonthlyUpdateInputData.CostChangesInputData> costChanges) {
+    /**
+     * Applies monthly updates to distributors
+     * @param costChanges to be applied
+     */
+    public void update(final List<MonthlyUpdateInputData.CostChangesInputData> costChanges) {
         for (MonthlyUpdateInputData.CostChangesInputData costChange : costChanges) {
-            Distributor currDistributor = Distributors.getInstance().findDistributorByID(costChange.getId());
+            Distributor currDistributor = Distributors
+                                        .getInstance().findDistributorByID(costChange.getId());
             assert currDistributor != null;
 
             currDistributor.setInfrastructureCosts(costChange.getInfrastructureCost());
@@ -47,6 +65,9 @@ public final class Distributors {
         }
     }
 
+    /**
+     * Resets the distributor database
+     */
     public void reset() {
         instance = new Distributors();
     }

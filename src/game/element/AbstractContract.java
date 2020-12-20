@@ -1,49 +1,56 @@
 package game.element;
 
 public abstract class AbstractContract {
-    private int beneficiaryID;
-    private int issuerID;
+    private final int beneficiaryID;
     private int price;
     private int remContractMonths;
 
-    public AbstractContract(int issuerID, int beneficiaryID, int price, int remContractMonths) {
-        this.issuerID = issuerID;
+    public AbstractContract(final int beneficiaryID,
+                            final int price,
+                            final int remContractMonths) {
         this.beneficiaryID = beneficiaryID;
         this.price = price;
         this.remContractMonths = remContractMonths;
     }
 
+    /**
+     * Extension should not cause any problems
+     * @return beneficiary id
+     */
     public int getBeneficiaryID() {
         return beneficiaryID;
     }
-
-    public void setBeneficiaryID(int beneficiaryID) {
-        this.beneficiaryID = beneficiaryID;
-    }
-
-    public int getIssuerID() {
-        return issuerID;
-    }
-
-    public void setIssuerID(int issuerID) {
-        this.issuerID = issuerID;
-    }
-
+    /**
+     * Extension should not cause any problems
+     * @return contract price
+     */
     public int getPrice() {
         return price;
     }
-
-    public void setPrice(int price) {
+    /**
+     * Extension should not cause any problems
+     * @param price to set
+     */
+    public void setPrice(final int price) {
         this.price = price;
     }
-
+    /**
+     * Extension should not cause any problems
+     * @return remaining contract months
+     */
     public int getRemContractMonths() {
         return remContractMonths;
     }
-
-    public void setRemContractMonths(int remContractMonths) {
+    /**
+     * Extension should not cause any problems
+     * @param remContractMonths to set
+     */
+    public void setRemContractMonths(final int remContractMonths) {
         this.remContractMonths = remContractMonths;
     }
 
+    /**
+     * Terminates contract (customer won't have a contract anymore)
+     */
     public abstract void terminate();
 }
