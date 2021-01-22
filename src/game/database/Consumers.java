@@ -77,4 +77,11 @@ public final class Consumers {
     public void reset() {
         instance = new Consumers();
     }
+
+    @Override
+    public String toString() {
+        return "Consumers{" +
+                "consumerList=" + consumerList +
+                '}';
+    }
 }

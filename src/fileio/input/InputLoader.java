@@ -5,11 +5,15 @@ import common.Constants;
 import game.Game;
 import game.database.Consumers;
 import game.database.Distributors;
+import game.database.Producers;
 import game.factory.player.ConsumerFactory;
 import game.factory.player.DistributorFactory;
 import game.factory.player.PlayerFactory;
+import game.factory.support.ProducerFactory;
+import game.factory.support.SupportFactory;
 import game.player.Consumer;
 import game.player.Distributor;
+import game.support.Producer;
 
 import java.io.File;
 import java.io.IOException;
@@ -61,6 +65,7 @@ public final class InputLoader {
     public void transferData() {
         PlayerFactory consumerFactory = new ConsumerFactory();
         PlayerFactory distributorFactory = new DistributorFactory();
+        SupportFactory producerFactory = new ProducerFactory();
 
         // Game
         Game.getInstance().setNumberOfTurns(inputData.getNumberOfTurns());
@@ -97,8 +102,33 @@ public final class InputLoader {
                             .getInitialInfrastructureCost());
             args[Constants.FOURTH_ARG] = String
                     .valueOf(distributorInputData
-                            .getInitialProductionCost());
+                            .getEnergyNeededKW());
+            args[Constants.FIFTH_ARG] = String
+                    .valueOf(distributorInputData
+                            .getProducerStrategy());
             Distributors.getInstance().addToDB((Distributor) distributorFactory.create(args));
+        });
+
+        // Producers
+        inputData.getInitialData().getProducers().forEach(producerInputData -> {
+            String[] args = new String[Constants.NO_PRODUCER_PARAM];
+            args[Constants.ZEROTH_ARG] = String
+                    .valueOf(producerInputData
+                            .getId());
+            args[Constants.FIRST_ARG] = String
+                    .valueOf(producerInputData
+                            .getEnergyType());
+            args[Constants.SECOND_ARG] = String
+                    .valueOf(producerInputData
+                            .getMaxDistributors());
+            args[Constants.THIRD_ARG] = String
+                    .valueOf(producerInputData
+                            .getPriceKW());
+            args[Constants.FOURTH_ARG] = String
+                    .valueOf(producerInputData
+                            .getEnergyPerDistributor());
+
+            Producers.getInstance().addToDB((Producer) producerFactory.create(args));
         });
     }
 }

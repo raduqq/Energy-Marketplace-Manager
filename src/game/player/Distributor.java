@@ -195,4 +195,16 @@ public final class Distributor extends Player {
             noClients = contractList.size();
         }
     }
+
+    @Override
+    public String toString() {
+        return "Distributor{" +
+                "contractList=" + contractList +
+                ", noClients=" + noClients +
+                ", price=" + price +
+                ", contractLength=" + contractLength +
+                ", infrastructureCosts=" + infrastructureCosts +
+                ", productionCosts=" + productionCosts +
+                "}\n";
+    }
 }

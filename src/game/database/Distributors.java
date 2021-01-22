@@ -54,14 +54,13 @@ public final class Distributors {
      * Applies monthly updates to distributors
      * @param costChanges to be applied
      */
-    public void update(final List<MonthlyUpdateInputData.CostChangesInputData> costChanges) {
-        for (MonthlyUpdateInputData.CostChangesInputData costChange : costChanges) {
+    public void update(final List<MonthlyUpdateInputData.DistributorChangesInputData> costChanges) {
+        for (MonthlyUpdateInputData.DistributorChangesInputData costChange : costChanges) {
             Distributor currDistributor = Distributors
                                         .getInstance().findDistributorByID(costChange.getId());
             assert currDistributor != null;
 
             currDistributor.setInfrastructureCosts(costChange.getInfrastructureCost());
-            currDistributor.setProductionCosts(costChange.getProductionCost());
         }
     }
 
@@ -70,5 +69,12 @@ public final class Distributors {
      */
     public void reset() {
         instance = new Distributors();
+    }
+
+    @Override
+    public String toString() {
+        return "Distributors{" +
+                "distributorList=" + distributorList +
+                '}';
     }
 }

@@ -1,16 +1,23 @@
 import common.Constants;
 import fileio.input.InputLoader;
-import fileio.output.OutputWriter;
-import game.Game;
+import game.database.Consumers;
+import game.database.Distributors;
+import game.database.Producers;
+import game.support.strategy.EnergyChoiceStrategy;
+import game.support.strategy.GreenChoiceStrategy;
+import game.support.strategy.PriceChoiceStrategy;
+import game.support.strategy.QuantityChoiceStrategy;
 
 public final class Main {
     private Main() {
     }
+
     /**
-     * Program entry point
-     * @param args input & output paths
+     * Main function which reads the input file and starts simulation
+     *
+     * @param args input and output files
      */
-    public static void main(final String[] args) {
+    public static void main(final String[] args){
         String inputPath = args[Constants.ZEROTH_ARG];
         String outputPath = args[Constants.FIRST_ARG];
 
@@ -18,6 +25,7 @@ public final class Main {
         InputLoader inputLoader = new InputLoader(inputPath);
         inputLoader.loadData();
 
+        /*
         // Playing
         Game.getInstance().play(inputLoader.getInputData().getMonthlyUpdates());
 
@@ -27,5 +35,6 @@ public final class Main {
 
         // Clearing all data
         Game.getInstance().reset();
+         */
     }
 }

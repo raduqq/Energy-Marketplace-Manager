@@ -65,12 +65,16 @@ public final class Game {
      * @param monthlyUpdates to be applied
      */
     public void applyMonthlyUpdates(final List<MonthlyUpdateInputData> monthlyUpdates) {
+
         // Fetch current update
         MonthlyUpdateInputData currUpdate = monthlyUpdates.get(0);
 
         // Updating databases
+        // TODO: adapt
         Consumers.getInstance().update(currUpdate.getNewConsumers());
-        Distributors.getInstance().update(currUpdate.getCostsChanges());
+        // TODO: adapt
+        Distributors.getInstance().update(currUpdate.getDistributorChanges());
+        // TODO: add producers
 
         // Done with current update
         monthlyUpdates.remove(0);

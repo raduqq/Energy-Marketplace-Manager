@@ -15,6 +15,7 @@ import java.util.ArrayList;
 import java.util.List;
 
 public final class OutputWriter {
+    // TODO: may need to be updated?
     private final File outputFile;
 
     private final OutputData outputData;

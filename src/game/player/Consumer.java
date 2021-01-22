@@ -140,4 +140,13 @@ public final class Consumer extends Player {
             setBudget(getBudget() + monthlyIncome);
         }
     }
+
+    @Override
+    public String toString() {
+        return "Consumer{" +
+                "monthlyIncome=" + monthlyIncome +
+                ", currContract=" + currContract +
+                ", currDistributor=" + currDistributor +
+                "}\n";
+    }
 }
