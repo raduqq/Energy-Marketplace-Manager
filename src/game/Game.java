@@ -3,9 +3,10 @@ package game;
 import fileio.input.MonthlyUpdateInputData;
 import game.database.Consumers;
 import game.database.Distributors;
+import game.database.Producers;
 import game.element.Contract;
-import game.player.Consumer;
-import game.player.Distributor;
+import game.entity.player.Consumer;
+import game.entity.player.Distributor;
 
 import java.util.List;
 
@@ -25,6 +26,7 @@ public final class Game {
 
         Consumers.getInstance().reset();
         Distributors.getInstance().reset();
+        Producers.getInstance().reset();
     }
 
     public static Game getInstance() {
@@ -44,8 +46,8 @@ public final class Game {
      * Updates are done each round
      */
     public void updatePlayers() {
-        Consumers.getInstance().getConsumerList().forEach(Consumer::update);
-        Distributors.getInstance().getDistributorList().forEach(Distributor::update);
+        Consumers.getInstance().getConsumerList().forEach(Consumer::roundUpdate);
+        Distributors.getInstance().getDistributorList().forEach(Distributor::roundUpdate);
     }
 
     /**
@@ -65,16 +67,13 @@ public final class Game {
      * @param monthlyUpdates to be applied
      */
     public void applyMonthlyUpdates(final List<MonthlyUpdateInputData> monthlyUpdates) {
-
         // Fetch current update
         MonthlyUpdateInputData currUpdate = monthlyUpdates.get(0);
 
         // Updating databases
-        // TODO: adapt
         Consumers.getInstance().update(currUpdate.getNewConsumers());
-        // TODO: adapt
         Distributors.getInstance().update(currUpdate.getDistributorChanges());
-        // TODO: add producers
+        Producers.getInstance().update(currUpdate.getProducerChanges());
 
         // Done with current update
         monthlyUpdates.remove(0);

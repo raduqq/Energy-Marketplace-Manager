@@ -4,7 +4,7 @@ import common.Constants;
 import fileio.input.ConsumerInputData;
 import game.factory.player.ConsumerFactory;
 import game.factory.player.PlayerFactory;
-import game.player.Consumer;
+import game.entity.player.Consumer;
 
 import java.util.ArrayList;
 import java.util.List;

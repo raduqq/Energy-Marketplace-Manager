@@ -1,7 +1,7 @@
-package game.support.strategy;
+package game.strategy;
 
 import game.database.Producers;
-import game.support.Producer;
+import game.entity.support.Producer;
 
 import java.util.Comparator;
 import java.util.List;
@@ -9,7 +9,7 @@ import java.util.stream.Collectors;
 
 public class PriceChoiceStrategy implements EnergyChoiceStrategy{
     @Override
-    public Producer chooseEnergyStrategy() {
+    public List<Producer> chooseEnergyStrategy() {
         // Sort by price -> asc
         Comparator<Producer> priceProdCmp = Comparator.comparing(Producer::getPriceKW)
                 // By quantity -> desc
@@ -18,8 +18,8 @@ public class PriceChoiceStrategy implements EnergyChoiceStrategy{
                 .thenComparing(Producer::getId);
 
         return Producers.getInstance().getProducerList().stream()
+                .filter(producer -> producer.getDistributorList().size() < producer.getMaxDistributors())
                 .sorted(priceProdCmp)
-                .collect(Collectors.toList())
-                .get(0);
+                .collect(Collectors.toList());
     }
 }

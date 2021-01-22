@@ -1,4 +1,4 @@
-package game.support.strategy;
+package game.strategy;
 
 /**
  * Strategy types for distributors to choose their producers

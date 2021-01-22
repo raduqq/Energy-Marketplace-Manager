@@ -1,8 +1,8 @@
 package game.factory.support;
 
 import game.element.EnergyType;
-import game.support.Producer;
-import game.support.strategy.Support;
+import game.entity.support.Producer;
+import game.strategy.Support;
 
 public class ProducerFactory implements SupportFactory {
     @Override

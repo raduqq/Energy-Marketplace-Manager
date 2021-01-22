@@ -1,7 +1,7 @@
 package game.factory.player;
 
-import game.player.Consumer;
-import game.player.Player;
+import game.entity.player.Consumer;
+import game.entity.player.Player;
 
 public final class ConsumerFactory implements PlayerFactory {
     @Override

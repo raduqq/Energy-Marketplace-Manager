@@ -1,7 +1,7 @@
 package game.database;
 
 import fileio.input.MonthlyUpdateInputData;
-import game.player.Distributor;
+import game.entity.player.Distributor;
 
 import java.util.ArrayList;
 import java.util.List;

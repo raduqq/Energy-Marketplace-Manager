@@ -1,6 +1,7 @@
 package game.database;
 
-import game.support.Producer;
+import fileio.input.MonthlyUpdateInputData;
+import game.entity.support.Producer;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -34,8 +35,6 @@ public class Producers {
         producerList.add(producer);
     }
 
-    //TODO: update
-
     /**
      * Resets the producer database
      */
@@ -47,4 +46,31 @@ public class Producers {
                 "producerList=" + producerList +
                 '}';
     }
+
+    public void update(List<MonthlyUpdateInputData.ProducerChangesInputData> producerChanges) {
+        for (MonthlyUpdateInputData.ProducerChangesInputData producerChange : producerChanges) {
+            // Finding producer to apply update to
+            Producer currProducer = Producers
+                                    .getInstance().findProducerByID(producerChange.getId());
+
+            assert currProducer != null;
+
+            // Applying update
+            currProducer.setEnergyPerDistributor(producerChange.getEnergyPerDistributor());
+
+            // Notifying observers
+            currProducer.notify(null);
+        }
+    }
+
+    public Producer findProducerByID(final int id) {
+        for (Producer producer : producerList) {
+            if (producer.getId() == id) {
+                return producer;
+            }
+        }
+
+        return null;
+    }
+
 }

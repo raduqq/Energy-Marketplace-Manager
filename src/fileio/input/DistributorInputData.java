@@ -1,6 +1,6 @@
 package fileio.input;
 
-import game.support.strategy.EnergyChoiceStrategyType;
+import game.strategy.EnergyChoiceStrategyType;
 
 public final class DistributorInputData {
     private int id;

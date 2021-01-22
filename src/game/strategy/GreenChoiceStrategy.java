@@ -1,7 +1,7 @@
-package game.support.strategy;
+package game.strategy;
 
 import game.database.Producers;
-import game.support.Producer;
+import game.entity.support.Producer;
 
 import java.util.Comparator;
 import java.util.List;
@@ -9,7 +9,7 @@ import java.util.stream.Collectors;
 
 public class GreenChoiceStrategy implements EnergyChoiceStrategy {
     @Override
-    public Producer chooseEnergyStrategy() {
+    public List<Producer> chooseEnergyStrategy() {
         // Sort by renewability -> green first
         Comparator<Producer> greenProdCmp = Comparator.comparing((Producer prod) -> prod.getEnergyType().isRenewable(),
                 Comparator.reverseOrder())
@@ -21,8 +21,8 @@ public class GreenChoiceStrategy implements EnergyChoiceStrategy {
                 .thenComparing(Producer::getId);
 
         return Producers.getInstance().getProducerList().stream()
+                .filter(producer -> producer.getDistributorList().size() < producer.getMaxDistributors())
                 .sorted(greenProdCmp)
-                .collect(Collectors.toList())
-                .get(0);
+                .collect(Collectors.toList());
     }
 }

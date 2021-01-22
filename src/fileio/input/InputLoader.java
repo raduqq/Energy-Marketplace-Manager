@@ -11,9 +11,9 @@ import game.factory.player.DistributorFactory;
 import game.factory.player.PlayerFactory;
 import game.factory.support.ProducerFactory;
 import game.factory.support.SupportFactory;
-import game.player.Consumer;
-import game.player.Distributor;
-import game.support.Producer;
+import game.entity.player.Consumer;
+import game.entity.player.Distributor;
+import game.entity.support.Producer;
 
 import java.io.File;
 import java.io.IOException;

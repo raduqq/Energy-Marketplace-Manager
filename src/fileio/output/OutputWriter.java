@@ -6,8 +6,8 @@ import com.fasterxml.jackson.databind.ObjectWriter;
 import game.database.Consumers;
 import game.database.Distributors;
 import game.element.Contract;
-import game.player.Consumer;
-import game.player.Distributor;
+import game.entity.player.Consumer;
+import game.entity.player.Distributor;
 
 import java.io.File;
 import java.io.IOException;
@@ -15,7 +15,6 @@ import java.util.ArrayList;
 import java.util.List;
 
 public final class OutputWriter {
-    // TODO: may need to be updated?
     private final File outputFile;
 
     private final OutputData outputData;

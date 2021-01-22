@@ -1,4 +1,4 @@
-package game.support.strategy;
+package game.strategy;
 
 public abstract class Support {
     /*

@@ -1,8 +1,9 @@
 package game.factory.player;
 
 import common.Constants;
-import game.player.Distributor;
-import game.player.Player;
+import game.entity.player.Distributor;
+import game.entity.player.Player;
+import game.strategy.EnergyChoiceStrategyType;
 
 public final class DistributorFactory implements PlayerFactory {
     @Override
@@ -11,12 +12,14 @@ public final class DistributorFactory implements PlayerFactory {
         int budget = Integer.parseInt(args[Constants.FIRST_ARG]);
         int contractLength = Integer.parseInt(args[Constants.SECOND_ARG]);
         int infrastructureCosts = Integer.parseInt(args[Constants.THIRD_ARG]);
-        int productionCosts = Integer.parseInt(args[Constants.FOURTH_ARG]);
+        int energyNeededKW = Integer.parseInt(args[Constants.FOURTH_ARG]);
+        EnergyChoiceStrategyType producerStrategy = EnergyChoiceStrategyType.valueOf(args[Constants.FIFTH_ARG]);
 
         return new Distributor(id,
                 budget,
                 contractLength,
                 infrastructureCosts,
-                productionCosts);
+                energyNeededKW,
+                producerStrategy);
     }
 }

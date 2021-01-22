@@ -1,7 +1,7 @@
 package game.element;
 
 import game.database.Consumers;
-import game.player.Consumer;
+import game.entity.player.Consumer;
 
 public final class Contract extends AbstractContract {
     private int overdue;

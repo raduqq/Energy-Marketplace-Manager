@@ -1,43 +1,109 @@
-package game.player;
+package game.entity.player;
 
 import common.Constants;
 import game.element.Contract;
 import game.factory.element.AbstractContractFactory;
 import game.factory.element.ContractFactory;
+import game.entity.support.Producer;
+import game.strategy.*;
+import game.observer.Observer;
 
 import java.util.ArrayList;
 import java.util.List;
 
-public final class Distributor extends Player {
+public final class Distributor extends Player implements Observer {
     private final List<Contract> contractList;
+    private final List<Producer> producerList;
+
     private int noClients;
     private int price;
     private int contractLength;
     private int infrastructureCosts;
+
+    private int energyNeededKW;
+    //TODO: may be deleted later (?)
+    private EnergyChoiceStrategyType producerStrategyType;
+    private EnergyChoiceStrategy producerStrategy;
     private int productionCosts;
+    private boolean needsProducers;
 
     public Distributor(final int id,
                        final int budget,
                        final int contractLength,
                        final int infrastructureCosts,
-                       final int productionCosts) {
+                       final int energyNeededKW,
+                       final EnergyChoiceStrategyType producerStrategy) {
         super(id, budget);
         this.contractList = new ArrayList<>();
+        this.producerList = new ArrayList<>();
         this.noClients = 0;
         this.contractLength = contractLength;
         this.infrastructureCosts = infrastructureCosts;
-        this.productionCosts = productionCosts;
+        this.energyNeededKW = energyNeededKW;
+        this.producerStrategyType = producerStrategy;
+        determineProducerStrategy(producerStrategy);
+        needsProducers = true;
+    }
+
+    //TODO: can be replaced with factory
+    public void determineProducerStrategy(EnergyChoiceStrategyType energyChoiceStrategyType) {
+        switch (energyChoiceStrategyType) {
+            case GREEN -> producerStrategy = new GreenChoiceStrategy();
+            case PRICE -> producerStrategy = new PriceChoiceStrategy();
+            case QUANTITY -> producerStrategy = new QuantityChoiceStrategy();
+            default -> throw new IllegalStateException("Unexpected value: " + energyChoiceStrategyType);
+        }
+    }
+
+    public void chooseProducers() {
+        int totalEnergy = 0;
+
+        // Get best-suited producers
+        List<Producer> potentialProducers = producerStrategy.chooseEnergyStrategy();
+
+        while (totalEnergy < energyNeededKW) {
+            // Get current potential producer
+            Producer currProducer = potentialProducers.get(0);
+
+            // Cannot find producer => bankruptcy
+            if (currProducer == null) {
+                goBankrupt();
+                return;
+            }
+
+            // Mark choice as made
+            currProducer.assignContract(this);
+            // Mark energy as secured
+            totalEnergy += currProducer.getEnergyPerDistributor();
+            // Mark producer as already contracted with
+            potentialProducers.remove(0);
+        }
+    }
+
+    public void computeProductionCosts() {
+        int totalProductionCosts = 0;
+
+        for (Producer producer : producerList) {
+            totalProductionCosts += producer.getEnergyPerDistributor() * producer.getPriceKW();
+        }
+
+        productionCosts = Math
+                        .toIntExact(
+                                Math.round(
+                                        Math.floor((double) totalProductionCosts / 10)));
     }
 
     /**
      * Computes this round's contract prices
      */
     public void computePrice() {
+        computeProductionCosts();
+
         // Compute profit
         int profit = Math
                     .toIntExact(
-                                Math.round(
-                                        Math.floor(Constants.PROFIT_FACTOR * productionCosts)));
+                            Math.round(
+                                    Math.floor(Constants.PROFIT_FACTOR * productionCosts)));
 
         // Compute new price
         if (contractList.isEmpty()) {
@@ -80,6 +146,10 @@ public final class Distributor extends Player {
 
     public void setContractLength(final int contractLength) {
         this.contractLength = contractLength;
+    }
+
+    public List<Producer> getProducerList() {
+        return producerList;
     }
 
     /**
@@ -157,6 +227,7 @@ public final class Distributor extends Player {
     public void goBankrupt() {
         setIsBankrupt(true);
         contractList.forEach(Contract::terminate);
+        producerList.forEach(producer -> producer.terminateContract(this));
     }
 
     @Override
@@ -187,10 +258,16 @@ public final class Distributor extends Player {
     }
 
     @Override
-    public void update() {
+    public void roundUpdate() {
         if (!getIsBankrupt()) {
+            if (needsProducers) {
+                chooseProducers();
+                needsProducers = false;
+            }
+
             computePrice();
             updateContractList();
+
             // no clients: excluding those whose contracts expired this month
             noClients = contractList.size();
         }
@@ -199,12 +276,18 @@ public final class Distributor extends Player {
     @Override
     public String toString() {
         return "Distributor{" +
-                "contractList=" + contractList +
-                ", noClients=" + noClients +
-                ", price=" + price +
-                ", contractLength=" + contractLength +
-                ", infrastructureCosts=" + infrastructureCosts +
-                ", productionCosts=" + productionCosts +
+                "id=" + getId() +
+                ", price=" + getPrice() +
+                ", budget=" + getBudget() +
+                ", isBankrupt=" + getIsBankrupt() +
+                ", producerList=" + producerList +
+                ", contractList=" + contractList +
                 "}\n";
+    }
+
+    @Override
+    public void update(Object arg) {
+        producerList.clear();
+        needsProducers = true;
     }
 }

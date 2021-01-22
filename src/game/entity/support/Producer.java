@@ -1,9 +1,15 @@
-package game.support;
+package game.entity.support;
 
 import game.element.EnergyType;
-import game.support.strategy.Support;
+import game.entity.player.Distributor;
+import game.strategy.Support;
+import game.observer.Observable;
 
-public class Producer extends Support {
+import java.util.ArrayList;
+import java.util.List;
+
+public class Producer extends Support implements Observable {
+    private List<Distributor> distributorList;
     private int id;
     private EnergyType energyType;
     private int maxDistributors;
@@ -15,11 +21,20 @@ public class Producer extends Support {
                     final int maxDistributors,
                     final double priceKW,
                     final int energyPerDistributor) {
+        this.distributorList = new ArrayList<>();
         this.id = id;
         this.energyType = energyType;
         this.maxDistributors = maxDistributors;
         this.priceKW = priceKW;
         this.energyPerDistributor = energyPerDistributor;
+    }
+
+    public List<Distributor> getDistributorList() {
+        return distributorList;
+    }
+
+    public void setDistributorList(List<Distributor> distributorList) {
+        this.distributorList = distributorList;
     }
 
     public int getId() {
@@ -62,14 +77,30 @@ public class Producer extends Support {
         this.energyPerDistributor = energyPerDistributor;
     }
 
+    public void assignContract(final Distributor distributor) {
+        // Write to the producer's contract record
+        distributor.getProducerList().add(this);
+        distributorList.add(distributor);
+    }
+
+    // TODO: replace with ProdDistribContract.terminate()
+    public void terminateContract(Distributor distributor) {
+        distributor.getProducerList().remove(this);
+        distributorList.remove(distributor);
+    }
+
+
+
     @Override
     public String toString() {
         return "Producer{" +
                 "id=" + id +
-                ", energyType=" + energyType +
-                ", maxDistributors=" + maxDistributors +
-                ", priceKW=" + priceKW +
                 ", energyPerDistributor=" + energyPerDistributor +
-                "}\n";
+                "}";
+    }
+
+    @Override
+    public void notify(Object arg) {
+        distributorList.forEach(distributor -> distributor.update(null));
     }
 }

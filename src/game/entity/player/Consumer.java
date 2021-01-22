@@ -1,4 +1,4 @@
-package game.player;
+package game.entity.player;
 
 import common.Constants;
 import game.database.Distributors;
@@ -61,6 +61,7 @@ public final class Consumer extends Player {
      * => only need to pay overdue bill (if existent)
      */
     public void resolvePastArrangement() {
+        // TODO: vezi enuntul, poate trebuie updatat
         if (currContract == null) {
             return;
         }
@@ -135,7 +136,7 @@ public final class Consumer extends Player {
     }
 
     @Override
-    public void update() {
+    public void roundUpdate() {
         if (!getIsBankrupt()) {
             setBudget(getBudget() + monthlyIncome);
         }
@@ -144,9 +145,9 @@ public final class Consumer extends Player {
     @Override
     public String toString() {
         return "Consumer{" +
-                "monthlyIncome=" + monthlyIncome +
-                ", currContract=" + currContract +
-                ", currDistributor=" + currDistributor +
+                "id=" + getId() +
+                ", isBankrupt=" + getIsBankrupt() +
+                ", budget=" + getBudget() +
                 "}\n";
     }
 }

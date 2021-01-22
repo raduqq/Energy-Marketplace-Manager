@@ -4,7 +4,6 @@ import java.util.ArrayList;
 import java.util.List;
 
 public final class OutputData {
-    // TODO: may need to be updated?
     public static final class ConsumerOutputData {
         private int id;
         private boolean isBankrupt;

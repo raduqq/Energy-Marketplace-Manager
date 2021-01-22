@@ -1,4 +1,4 @@
-package game.player;
+package game.entity.player;
 
 public abstract class Player {
     private int id;
@@ -57,7 +57,7 @@ public abstract class Player {
     /**
      * Updates player state each round
      */
-    public abstract void update();
+    public abstract void roundUpdate();
     /**
      * Turn taking method called every round
      */

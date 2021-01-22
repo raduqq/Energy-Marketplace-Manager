@@ -1,6 +1,6 @@
 package game.factory.player;
 
-import game.player.Player;
+import game.entity.player.Player;
 
 public interface PlayerFactory {
     /**
