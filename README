@@ -1,11 +1,10 @@
-# Proiect POO - Etapa 1 - Sistem Energetic
+# Proiect POO - Sistem Energetic
 
 Nume: Radu-Stefan Minea
 Serie: CA
 Grupa: 324CA
-Timp petrecut pe tema: ~ 5 zile
+Timp petrecut pe tema: 5 zile (etapa 1) + o zi (etapa 2)
 
-===============================================================================
 ## Relatiile intre clase
 
 * Player (Abstract Class) -> Consumer, Distributor
@@ -77,6 +76,12 @@ folosi doua baze de date dinstincte de Playeri in acelasi timp
         > Consumers
         > Distributors
 
+Datorita feedback-ului din etapa 1, sunt constient ca aceasta nu este o
+utilizare corecta a Singleton-ului. In schimb, puteam include acest Singleton
+in cadrul factory-urilor, intrucat acestea nu aveau nevoie de mai mult de o 
+instanta. Totusi, nu am reusit sa ma organizez de asa natura incat sa pot
+modifica acest aspect.
+
 * Factory
 
 Folosit pentru a incapsula crearea de Playeri si Contracte noi
@@ -87,6 +92,10 @@ Folosit pentru a incapsula crearea de Playeri si Contracte noi
     - Player -> Consumer, Distributor
         > Apelat in crearea de noi Playeri (in adaugarea de noi entry-uri in
         bazele de date)
+
+* Strategy
+
+* Observer
 
 ===============================================================================
 ## Limitari
