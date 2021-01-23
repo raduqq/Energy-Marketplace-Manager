@@ -40,45 +40,48 @@ public final class Game {
     public void setNumberOfTurns(final int numberOfTurns) {
         this.numberOfTurns = numberOfTurns;
     }
-
     /**
      * Updates the game's players
      * Updates are done each round
      */
-    public void updatePlayers() {
+    public void roundUpdatePlayers() {
         Consumers.getInstance().getConsumerList().forEach(Consumer::roundUpdate);
         Distributors.getInstance().getDistributorList().forEach(Distributor::roundUpdate);
     }
-
     /**
      * Updates the game's elements
      * Updates are done each round
      */
-    public void updateElements() {
+    public void roundUpdateElements() {
         for (Distributor distributor : Distributors.getInstance().getDistributorList()) {
             for (ConsumerContract consumerContract : distributor.getContractList()) {
                 consumerContract.update();
             }
         }
     }
-
     /**
-     * Applying this month's updates
+     * Applying this month's updates to players
      * @param monthlyUpdates to be applied
      */
-    public void applyMonthlyUpdates(final List<MonthlyUpdateInputData> monthlyUpdates) {
+    public void applyPlayerMonthlyUpdates(final List<MonthlyUpdateInputData> monthlyUpdates) {
         // Fetch current update
         MonthlyUpdateInputData currUpdate = monthlyUpdates.get(0);
 
         // Updating databases
         Consumers.getInstance().update(currUpdate.getNewConsumers());
         Distributors.getInstance().update(currUpdate.getDistributorChanges());
-        Producers.getInstance().update(currUpdate.getProducerChanges());
-
-        // Done with current update
-        monthlyUpdates.remove(0);
     }
+    /**
+     * Applying this month's updates to support entities
+     * @param monthlyUpdates to be applied
+     */
+    public void applySupportMonthlyUpdates(final List<MonthlyUpdateInputData> monthlyUpdates) {
+        // Fetch current update
+        MonthlyUpdateInputData currUpdate = monthlyUpdates.get(0);
 
+        // Updating databases
+        Producers.getInstance().update(currUpdate.getProducerChanges());
+    }
     /**
      * All players take turns here
      */
@@ -86,7 +89,6 @@ public final class Game {
         Consumers.getInstance().getConsumerList().forEach(Consumer::takeTurn);
         Distributors.getInstance().getDistributorList().forEach(Distributor::takeTurn);
     }
-
     /**
      * Checks if game is still playable (i.e. there are still functioning distributors)
      * @return true if game is no longer playable
@@ -108,7 +110,16 @@ public final class Game {
                                     .forEach(producer ->
                                                     producer.generateMonthlyStats(currMonth));
     }
-
+    /**
+     * Simulates a month's game logic:
+     * - Players' and elements' attributes are updated
+     * - Players take turns
+     */
+    public void simulateRound() {
+        roundUpdatePlayers();
+        takeTurns();
+        roundUpdateElements();
+    }
     /**
      * Simulates numberOfTurns rounds
      * @param monthlyUpdates to be inserted every month
@@ -122,17 +133,22 @@ public final class Game {
 
             // Setup round (round 0) doesn't get updates
             if (i > 0) {
-                applyMonthlyUpdates(monthlyUpdates);
+                applyPlayerMonthlyUpdates(monthlyUpdates);
             }
 
             // Game logic of each round
-            updatePlayers();
-            takeTurns();
-            updateElements();
+            simulateRound();
 
-            // Setup round (round 0) doesn't get stats
+            // Setup round (round 0) doesn't get support updates + stats
             if (i > 0) {
+                // Stats
                 generateStats(i);
+
+                // Support updates
+                applySupportMonthlyUpdates(monthlyUpdates);
+
+                // Done with this month's updates
+                monthlyUpdates.remove(0);
             }
         }
     }

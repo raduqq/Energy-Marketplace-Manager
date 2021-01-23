@@ -2,9 +2,12 @@ package game.entity.support;
 
 import game.element.EnergyType;
 import game.entity.player.Distributor;
+import game.entity.player.Player;
 import game.observer.Observable;
 
 import java.util.ArrayList;
+import java.util.Collections;
+import java.util.Comparator;
 import java.util.List;
 
 public final class Producer extends Support implements Observable {
@@ -138,6 +141,8 @@ public final class Producer extends Support implements Observable {
         for (Distributor distributor : distributorList) {
             currMonthlyStats.getDistributorsIds().add(distributor.getId());
         }
+        // Sort distributor list by distributorIds
+        Collections.sort(currMonthlyStats.getDistributorsIds());
 
         // Add current month stats to overall monthly stats
         monthlyStats.add(currMonthlyStats);
@@ -146,6 +151,11 @@ public final class Producer extends Support implements Observable {
     @Override
     public void notify(final Object arg) {
         List<Distributor> copyDistributorList = new ArrayList<>(distributorList);
+
+        // Sorting distributors list by ID
+        copyDistributorList.sort(Comparator.comparing(Player::getId));
+
+        // Issuing notifications
         copyDistributorList.forEach(distributor -> distributor.update(null));
     }
 }

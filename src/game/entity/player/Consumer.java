@@ -31,7 +31,6 @@ public final class Consumer extends Player {
     public void setCurrContract(final ConsumerContract consumerContract) {
         this.currConsumerContract = consumerContract;
     }
-
     /**
      * Picks distributor at the beginning of the road
      * Signs contract with picked distributor
@@ -55,7 +54,6 @@ public final class Consumer extends Player {
         // Assign contract to consumer
         currDistributor.assignContract(this);
     }
-
     /**
      * Edge case: contract has run down, therefore it doesn't generate new bills
      * => only need to pay overdue bill (if existent)
@@ -74,7 +72,6 @@ public final class Consumer extends Player {
             }
         }
     }
-
     /**
      * Pays current bill (along with overdue)
      */

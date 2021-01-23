@@ -13,6 +13,7 @@ import game.strategy.PriceChoiceStrategy;
 import game.strategy.QuantityChoiceStrategy;
 
 import java.util.ArrayList;
+import java.util.Comparator;
 import java.util.List;
 
 public final class Distributor extends Player implements Observer {
@@ -46,6 +47,54 @@ public final class Distributor extends Player implements Observer {
         this.producerStrategyType = producerStrategy;
         determineProducerStrategy(producerStrategy);
         needsProducers = true;
+    }
+
+    public int getEnergyNeededKW() {
+        return energyNeededKW;
+    }
+
+    public void setEnergyNeededKW(final int energyNeededKW) {
+        this.energyNeededKW = energyNeededKW;
+    }
+
+    public EnergyChoiceStrategyType getProducerStrategyType() {
+        return producerStrategyType;
+    }
+
+    public EnergyChoiceStrategy getProducerStrategy() {
+        return producerStrategy;
+    }
+
+    public void setProducerStrategy(final EnergyChoiceStrategy producerStrategy) {
+        this.producerStrategy = producerStrategy;
+    }
+
+    public void setInfrastructureCosts(final int infrastructureCosts) {
+        this.infrastructureCosts = infrastructureCosts;
+    }
+
+    public List<ConsumerContract> getContractList() {
+        return consumerContractList;
+    }
+
+    public int getPrice() {
+        return price;
+    }
+
+    public void setPrice(final int price) {
+        this.price = price;
+    }
+
+    public int getContractLength() {
+        return contractLength;
+    }
+
+    public void setContractLength(final int contractLength) {
+        this.contractLength = contractLength;
+    }
+
+    public List<Producer> getProducerList() {
+        return producerList;
     }
     /**
      * Converts EnergyChoiceStraegyType ("PRICE") to EnergyChoiceStrategy(PriceStrategy)
@@ -112,8 +161,6 @@ public final class Distributor extends Player implements Observer {
      * Computes this round's contract prices
      */
     public void computePrice() {
-        computeProductionCosts();
-
         // Compute profit
         int profit = Math
                     .toIntExact(
@@ -130,55 +177,6 @@ public final class Distributor extends Player implements Observer {
                     + profit));
         }
     }
-
-    public int getEnergyNeededKW() {
-        return energyNeededKW;
-    }
-
-    public void setEnergyNeededKW(final int energyNeededKW) {
-        this.energyNeededKW = energyNeededKW;
-    }
-
-    public EnergyChoiceStrategyType getProducerStrategyType() {
-        return producerStrategyType;
-    }
-
-    public EnergyChoiceStrategy getProducerStrategy() {
-        return producerStrategy;
-    }
-
-    public void setProducerStrategy(final EnergyChoiceStrategy producerStrategy) {
-        this.producerStrategy = producerStrategy;
-    }
-
-    public void setInfrastructureCosts(final int infrastructureCosts) {
-        this.infrastructureCosts = infrastructureCosts;
-    }
-
-    public List<ConsumerContract> getContractList() {
-        return consumerContractList;
-    }
-
-    public int getPrice() {
-        return price;
-    }
-
-    public void setPrice(final int price) {
-        this.price = price;
-    }
-
-    public int getContractLength() {
-        return contractLength;
-    }
-
-    public void setContractLength(final int contractLength) {
-        this.contractLength = contractLength;
-    }
-
-    public List<Producer> getProducerList() {
-        return producerList;
-    }
-
     /**
      * Generating contract to be assigned to customer
      * @param consumer to generate contract for
@@ -194,7 +192,6 @@ public final class Distributor extends Player implements Observer {
 
         return (ConsumerContract) contractFactory.create(args);
     }
-
     /**
      * Assigning contract to customer
      * - Generating contract
@@ -211,7 +208,6 @@ public final class Distributor extends Player implements Observer {
         consumerContractList.add(currConsumerContract);
         noClients++;
     }
-
     /**
      * Terminates contract:
      * - Sets customer's currContract to null
@@ -228,7 +224,6 @@ public final class Distributor extends Player implements Observer {
          noClients at start of round needed for payCosts.
          */
     }
-
     /**
      * Collects payment from customer (when he is able to pay)
      * @param payment to be collected
@@ -236,7 +231,6 @@ public final class Distributor extends Player implements Observer {
     public void collectPayment(final int payment) {
         setBudget(getBudget() + payment);
     }
-
     /**
      * Pays costs at the end of round
      */
@@ -264,9 +258,9 @@ public final class Distributor extends Player implements Observer {
             payCosts();
         }
     }
-
     /**
-     * Updates contract list (removing expired contracts)
+     * Updates contract list (re
+     * moving expired contracts)
      * At the beginning of the round, after computing this round's prices
      */
     public void updateContractList() {
@@ -289,7 +283,10 @@ public final class Distributor extends Player implements Observer {
     public void roundUpdate() {
         if (!getIsBankrupt()) {
             if (needsProducers) {
+                // Getting new producers if last month producers were updated
                 chooseProducers();
+                // Recomputing production costs
+                computeProductionCosts();
                 needsProducers = false;
             }
 
@@ -305,7 +302,13 @@ public final class Distributor extends Player implements Observer {
     public void update(final Object arg) {
         List<Producer> copyProducerList = new ArrayList<>(producerList);
 
+        // Sorting producers list by ID
+        copyProducerList.sort(Comparator.comparing(Producer::getId));
+
+        // Performing updates
         copyProducerList.forEach(producer -> producer.terminateContract(this));
+
+        // This distributor will look for new producers in the next round
         needsProducers = true;
     }
 }
