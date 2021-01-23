@@ -5,12 +5,10 @@ Serie: CA
 Grupa: 324CA
 Timp petrecut pe tema: 5 zile (etapa 1) + o zi (etapa 2)
 
+===============================================================================
 ## Relatiile intre clase
 
 * Player (Abstract Class) -> Consumer, Distributor
-
-Am anticipat ca in etapa viitoare vor exista mai multe tipuri de jucatori
-(autoritati, producatori)
 
     - Consumer: agrega un Contract si un Distributor. De ce?
         > Atunci cand efectueaza plati, sa nu mai fie nevoie sa-si caute
@@ -37,32 +35,67 @@ Am anticipat ca in etapa viitoare vor exista mai multe tipuri de jucatori
                 - Pe parcursul rundei, noClients este actualizat atunci cand
                 clientii (re)semneaza cu un Distributor
 
+* Support (Abstract Class) -> Producer
+
+Desi aceasta este etapa finala a proiectului, am lasat o portita deschisa in
+sensul extinderii codului. Astfel, Support poate fi mostenita in continuare
+de entitati precum corpuri de control (ANAF).
+
+    - Producer:
+        > distributorList:
+            + Se adauga la aceasta in momentul in care distributorii isi aleg
+            producatorii (la inceput de luna)
+            + Se sterge din aceasta la finalul lunii, atunci cand producatorii
+            primesc update-urile lunare
+        > monthlyStats:
+            + Generate la finalul lunii
 
 * AbstractContract (Abstract Class) -> Contract
 
-Am intuit ca in etapa viitoare pot exista mai multe tipuri de contracte (intre
-producatori si Distributori, de exemplu)
-
     - Contract: contine field-ul overdue (= daca Consumer-ul are datorie)
 
+    - Desi in prima etapa am pastrat in mod intentionat Contract-ul, nu am
+    reusit sa extind aceasta clasa astfel:
+        > ConsumerContract: contracte distributor-consumator
+        > DistributorContract: contracte producator-distributor
+
+
 * Databases
-    - Agrega o lista de Consumer-i si, respectiv, o lista de Distrubutori
-        > Consumers
-        > Distributors
+    - Agrega liste de:
+        > Consumer-i        (Consumers)
+        > Distributori      (Distributors)
+        > Producatori       (Producers) 
     - Bazele de date sunt apelate in situatia in care se efectueaza operatii pe
-     toti Player-ii:
+     toate entitatile (Player-i, Support):
         > La incarcarea si descarcarea datelor (load input, upload output)
-        > In game logic: updatePlayers()
+        > In game logic: roundUpdatePlayers()
 
 ===============================================================================
 ## Logica programului
 
 * Game.play: pentru fiecare runda:
-    - endGameCheck:         Verifica daca jocul mai poate fi jucat
-    - applyMonthlyUpdates:  Aplica monthlyUpdates (pentru rundele 1+)
-    - updatePlayers:        Actualizeaza starea jucatorilor
-    - takeTurns:            Fiecare jucator isi indeplineste sarcinile
-    - updateElements:       Actualizeaza starea elementelor (contractelor)
+
+    - endGameCheck:                 Verifica daca jocul mai poate fi jucat
+
+    - applyPlayerMonthlyUpdates:    Aplica monthlyUpdates jucatorilor 
+                                    (pentru rundele 1+)
+
+    - simulateRound:                Actiunile ce au loc in acea runda:
+        > roundUpdatePlayers:       Actualizeaza starea jucatorilor
+            @Distributori:
+                + Se updateaza lista de producatori (cand este cazul)
+                + Se recalculeaza costul de productie
+                
+        > takeTurns:                Fiecare jucator isi indeplineste sarcinile
+        > roundUpdateElements:      Actualizeaza starea elementelor 
+                                    (contractelor)
+
+    - generateStats:                Se genereaza statisticile cerute, in
+                                    acest caz, de producatori
+
+    - applySupportMonthlyUpdates:   Logica simuarii impune aplicarea separata
+                                    a update-urilor lunare asupra entitatilor
+                                    de tip Support
 
 ===============================================================================
 ## Folosire Design Patterns
@@ -76,15 +109,17 @@ folosi doua baze de date dinstincte de Playeri in acelasi timp
         > Consumers
         > Distributors
 
-Datorita feedback-ului din etapa 1, sunt constient ca aceasta nu este o
-utilizare corecta a Singleton-ului. In schimb, puteam include acest Singleton
-in cadrul factory-urilor, intrucat acestea nu aveau nevoie de mai mult de o 
-instanta. Totusi, nu am reusit sa ma organizez de asa natura incat sa pot
-modifica acest aspect.
+    - Datorita feedback-ului din etapa 1, sunt constient ca aceasta nu este o
+    utilizare corecta a Singleton-ului. 
+        > In schimb, puteam include acest Singleton in cadrul factory-urilor, 
+        intrucat acestea nu aveau nevoie de mai mult de o instanta
+        > Totusi, nu am reusit sa ma organizez de asa natura incat sa pot
+        modifica acest aspect
 
 * Factory
 
-Folosit pentru a incapsula crearea de Playeri si Contracte noi
+Folosit pentru a incapsula crearea de Playeri, Contracte si entitati de tip 
+Support
 
     - AbstractContract -> Contract:
         > Apelat in crearea de noi contracte (atunci cand un Consumer semneaza
@@ -92,19 +127,46 @@ Folosit pentru a incapsula crearea de Playeri si Contracte noi
     - Player -> Consumer, Distributor
         > Apelat in crearea de noi Playeri (in adaugarea de noi entry-uri in
         bazele de date)
+    - Support -> Producer
+        > Similar
 
 * Strategy
 
+Folosit pentru a ajuta distributorul sa isi aleaga producatorii
+
+    * EnergyChoiceStrategy (Interf.) -> Green-, Price-, QuantityChoiceStrategy
+        - Sortarile prodcatorilor dupa criteriile fiecarei strategii -> streams
+        - Interfata permite ca fiecare distributor sa isi poata aplica
+        strategia in mod dinamic la runtime
+
 * Observer
+
+Folosit pentru a mapa relatia observator-subiect dintre distributori si 
+producatori 
+
+    * La finalul lunii, producatorii sunt updatati => distributorii sunt 
+    notificati:
+        - Se dizolva relatia dintre producatorul si distributorul respectiv
+        - Distributorilor li se seteaza un flag (needsProducers)
+    
+    * La inceputul lunii urmatoare, distributorii cu flag-ul needsProducers
+    isi vor cauta (de la 0) producatori noi
 
 ===============================================================================
 ## Limitari
 
-* Databases:
-    - Puteam unifica Consumers si Distributors intr-o clasa Players care sa
-    agrege o lista de Player-i
+Pe langa limitarile mentioante la Singleton si la AbstractContract:
 
-* Game: o puteam sparge in:
-    - GameEngine: sa contina doar driver code-ul (metoda play)
-    - RoundEngine: sa contina toate cele necesare desfasurarii unei runde
-    (metodele de update, mecanismul de turn-taking)
+    - As fi putut modulariza mai agresiv
+    - Este probabil ca testele sa pice din pricina faptului ca nu am 
+    replicat logica prezentata in enunt cu suficienta fidelitate
+
+===============================================================================
+## Feedback
+
+* Fisiere .ref:
+    - In eventualitatea unei teme ce presupune simularea unor runde, recomand
+    includerea in arhiva si a unor .ref-uri intermediare (testul 1: runda 1,
+    runda 2 etc.).
+        > In etapa 1, daca nu binevoiau colegii mei sa imi ofere astfel de 
+        .ref-uri, nu eram in stare sa fac tema.
