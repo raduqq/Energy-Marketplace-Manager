@@ -1,14 +1,12 @@
 package game;
 
 import fileio.input.MonthlyUpdateInputData;
-import fileio.output.OutputWriter;
 import game.database.Consumers;
 import game.database.Distributors;
 import game.database.Producers;
-import game.element.Contract;
+import game.element.ConsumerContract;
 import game.entity.player.Consumer;
 import game.entity.player.Distributor;
-import game.entity.support.Producer;
 
 import java.util.List;
 
@@ -58,8 +56,8 @@ public final class Game {
      */
     public void updateElements() {
         for (Distributor distributor : Distributors.getInstance().getDistributorList()) {
-            for (Contract contract : distributor.getContractList()) {
-                contract.update();
+            for (ConsumerContract consumerContract : distributor.getContractList()) {
+                consumerContract.update();
             }
         }
     }
@@ -132,11 +130,11 @@ public final class Game {
                 generateStats(i);
             }
 
-            System.out.println("====================================================== MONTH " + i + "======================================================");
-            // TESTING
-            System.out.println(Consumers.getInstance().getConsumerList());
-            System.out.println(Distributors.getInstance().getDistributorList());
-            System.out.println(Producers.getInstance().getProducerList());
+//            System.out.println("====================================================== MONTH " + i + "======================================================");
+//            // TESTING
+//            System.out.println(Consumers.getInstance().getConsumerList());
+//            System.out.println(Distributors.getInstance().getDistributorList());
+//            System.out.println(Producers.getInstance().getProducerList());
         }
     }
 }

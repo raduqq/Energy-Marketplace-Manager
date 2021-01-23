@@ -6,7 +6,7 @@ import com.fasterxml.jackson.databind.ObjectWriter;
 import game.database.Consumers;
 import game.database.Distributors;
 import game.database.Producers;
-import game.element.Contract;
+import game.element.ConsumerContract;
 import game.entity.player.Consumer;
 import game.entity.player.Distributor;
 import game.entity.support.Producer;
@@ -39,12 +39,12 @@ public final class OutputWriter {
             List<DistributorOutputData
                     .ContractOutputData> contractOutputDataList = new ArrayList<>();
 
-            for (Contract contract : distributor.getContractList()) {
+            for (ConsumerContract consumerContract : distributor.getContractList()) {
                 contractOutputDataList
                         .add(new DistributorOutputData
-                                .ContractOutputData(contract.getBeneficiaryID(),
-                                                    contract.getPrice(),
-                                                    contract.getRemContractMonths()));
+                                .ContractOutputData(consumerContract.getBeneficiaryID(),
+                                                    consumerContract.getPrice(),
+                                                    consumerContract.getRemContractMonths()));
             }
 
             outputData.getDistributors()

@@ -3,12 +3,12 @@ package game.element;
 import game.database.Consumers;
 import game.entity.player.Consumer;
 
-public final class Contract extends AbstractContract {
+public final class ConsumerContract extends AbstractContract {
     private int overdue;
 
-    public Contract(final int beneficiaryID,
-                    final int price,
-                    final int remContractMonths) {
+    public ConsumerContract(final int beneficiaryID,
+                            final int price,
+                            final int remContractMonths) {
         super(beneficiaryID, price, remContractMonths);
         overdue = 0;
     }
@@ -31,6 +31,7 @@ public final class Contract extends AbstractContract {
     @Override
     public void terminate() {
         Consumer currConsumer = Consumers.getInstance().findConsumerByID(getBeneficiaryID());
+
         if (currConsumer != null) {
             currConsumer.setCurrContract(null);
         }

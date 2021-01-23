@@ -1,7 +1,7 @@
 package game.entity.player;
 
 import common.Constants;
-import game.element.Contract;
+import game.element.ConsumerContract;
 import game.factory.element.AbstractContractFactory;
 import game.factory.element.ContractFactory;
 import game.entity.support.Producer;
@@ -13,7 +13,7 @@ import java.util.List;
 import java.util.stream.Collectors;
 
 public final class Distributor extends Player implements Observer {
-    private final List<Contract> contractList;
+    private final List<ConsumerContract> consumerContractList;
     private final List<Producer> producerList;
 
     private int noClients;
@@ -35,7 +35,7 @@ public final class Distributor extends Player implements Observer {
                        final int energyNeededKW,
                        final EnergyChoiceStrategyType producerStrategy) {
         super(id, budget);
-        this.contractList = new ArrayList<>();
+        this.consumerContractList = new ArrayList<>();
         this.producerList = new ArrayList<>();
         this.noClients = 0;
         this.contractLength = contractLength;
@@ -45,6 +45,7 @@ public final class Distributor extends Player implements Observer {
         determineProducerStrategy(producerStrategy);
         needsProducers = true;
     }
+
 
     //TODO: can be replaced with factory
     public void determineProducerStrategy(EnergyChoiceStrategyType energyChoiceStrategyType) {
@@ -107,11 +108,11 @@ public final class Distributor extends Player implements Observer {
                                     Math.floor(Constants.PROFIT_FACTOR * productionCosts)));
 
         // Compute new price
-        if (contractList.isEmpty()) {
+        if (consumerContractList.isEmpty()) {
             price = infrastructureCosts + productionCosts + profit;
         } else {
             price = Math.toIntExact(Math.round(Math.floor(
-                    (double) infrastructureCosts / contractList.size())
+                    (double) infrastructureCosts / consumerContractList.size())
                     + productionCosts
                     + profit));
         }
@@ -155,8 +156,8 @@ public final class Distributor extends Player implements Observer {
         this.productionCosts = productionCosts;
     }
 
-    public List<Contract> getContractList() {
-        return contractList;
+    public List<ConsumerContract> getContractList() {
+        return consumerContractList;
     }
 
     public int getPrice() {
@@ -184,7 +185,7 @@ public final class Distributor extends Player implements Observer {
      * @param consumer to generate contract for
      * @return contract ready to be assigned
      */
-    public Contract generateContract(final Consumer consumer) {
+    public ConsumerContract generateContract(final Consumer consumer) {
         AbstractContractFactory contractFactory = new ContractFactory();
 
         String[] args = new String[Constants.NO_CONTRACT_PARAM];
@@ -192,7 +193,7 @@ public final class Distributor extends Player implements Observer {
         args[Constants.FIRST_ARG] = String.valueOf(price);
         args[Constants.SECOND_ARG] = String.valueOf(contractLength);
 
-        return (Contract) contractFactory.create(args);
+        return (ConsumerContract) contractFactory.create(args);
     }
 
     /**
@@ -204,11 +205,11 @@ public final class Distributor extends Player implements Observer {
      */
     public void assignContract(final Consumer consumer) {
         // Generate contract
-        Contract currContract = generateContract(consumer);
+        ConsumerContract currConsumerContract = generateContract(consumer);
         // Give contract to customer
-        consumer.setCurrContract(currContract);
+        consumer.setCurrContract(currConsumerContract);
         // Write to the distributor's contract record
-        contractList.add(currContract);
+        consumerContractList.add(currConsumerContract);
         noClients++;
     }
 
@@ -216,12 +217,12 @@ public final class Distributor extends Player implements Observer {
      * Terminates contract:
      * - Sets customer's currContract to null
      * - Removes contract from distributor's contract list
-     * @param contract to be terminated
+     * @param consumerContract to be terminated
      */
-    public void terminateContract(final Contract contract) {
-        contract.terminate();
+    public void terminateContract(final ConsumerContract consumerContract) {
+        consumerContract.terminate();
         // Writing off the distributor's record
-        contractList.remove(contract);
+        consumerContractList.remove(consumerContract);
 
         /*
          NOT modifying noClients here.
@@ -253,7 +254,8 @@ public final class Distributor extends Player implements Observer {
     @Override
     public void goBankrupt() {
         setIsBankrupt(true);
-        contractList.forEach(Contract::terminate);
+        consumerContractList.forEach(ConsumerContract::terminate);
+
         producerList.forEach(producer -> producer.terminateContract(this));
     }
 
@@ -269,18 +271,18 @@ public final class Distributor extends Player implements Observer {
      * At the beginning of the round, after computing this round's prices
      */
     public void updateContractList() {
-        List<Contract> expiredContracts = new ArrayList<>();
+        List<ConsumerContract> expiredConsumerContracts = new ArrayList<>();
 
         // Fetching expired contracts
-        for (Contract contract : getContractList()) {
-            if (contract.getRemContractMonths() == 0 && contract.getOverdue() == 0) {
-                expiredContracts.add(contract);
+        for (ConsumerContract consumerContract : getContractList()) {
+            if (consumerContract.getRemContractMonths() == 0 && consumerContract.getOverdue() == 0) {
+                expiredConsumerContracts.add(consumerContract);
             }
         }
 
         // Removing expired contracts
-        for (Contract expiredContract : expiredContracts) {
-            terminateContract(expiredContract);
+        for (ConsumerContract expiredConsumerContract : expiredConsumerContracts) {
+            terminateContract(expiredConsumerContract);
         }
     }
 
@@ -296,7 +298,7 @@ public final class Distributor extends Player implements Observer {
             updateContractList();
 
             // no clients: excluding those whose contracts expired this month
-            noClients = contractList.size();
+            noClients = consumerContractList.size();
         }
     }
 
@@ -308,13 +310,15 @@ public final class Distributor extends Player implements Observer {
                 ", budget=" + getBudget() +
                 ", isBankrupt=" + getIsBankrupt() +
                 ", producerList=" + producerList.stream().map(Producer::getId).collect(Collectors.toList()) +
-                ", contractList=" + contractList +
+                ", contractList=" + consumerContractList +
                 "}\n";
     }
 
     @Override
     public void update(Object arg) {
-        producerList.clear();
+        List<Producer> copyProducerList = new ArrayList<>(producerList);
+
+        copyProducerList.forEach(producer -> producer.terminateContract(this));
         needsProducers = true;
     }
 }

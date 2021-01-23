@@ -158,6 +158,7 @@ public class Producer extends Support implements Observable {
 
     @Override
     public void notify(Object arg) {
-        distributorList.forEach(distributor -> distributor.update(null));
+        List<Distributor> copyDistributorList = new ArrayList<>(distributorList);
+        copyDistributorList.forEach(distributor -> distributor.update(null));
     }
 }

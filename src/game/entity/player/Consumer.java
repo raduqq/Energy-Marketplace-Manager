@@ -2,14 +2,14 @@ package game.entity.player;
 
 import common.Constants;
 import game.database.Distributors;
-import game.element.Contract;
+import game.element.ConsumerContract;
 
 import java.util.Comparator;
 import java.util.stream.Collectors;
 
 public final class Consumer extends Player {
     private int monthlyIncome;
-    private Contract currContract;
+    private ConsumerContract currConsumerContract;
     private Distributor currDistributor;
 
     public Consumer(final int id,
@@ -17,7 +17,7 @@ public final class Consumer extends Player {
                     final int monthlyIncome) {
         super(id, budget);
         this.monthlyIncome = monthlyIncome;
-        this.currContract = null;
+        this.currConsumerContract = null;
     }
 
     public int getMonthlyIncome() {
@@ -28,8 +28,8 @@ public final class Consumer extends Player {
         this.monthlyIncome = monthlyIncome;
     }
 
-    public void setCurrContract(final Contract currContract) {
-        this.currContract = currContract;
+    public void setCurrContract(final ConsumerContract currConsumerContract) {
+        this.currConsumerContract = currConsumerContract;
     }
 
     /**
@@ -38,7 +38,7 @@ public final class Consumer extends Player {
      */
     public void pickDistributor() {
         // Already has a contract => nothing to do
-        if (currContract != null) {
+        if (currConsumerContract != null) {
             return;
         }
 
@@ -62,15 +62,15 @@ public final class Consumer extends Player {
      */
     public void resolvePastArrangement() {
         // TODO: vezi enuntul, poate trebuie updatat
-        if (currContract == null) {
+        if (currConsumerContract == null) {
             return;
         }
 
-        if (currContract.getRemContractMonths() == 0 && currContract.getOverdue() != 0) {
+        if (currConsumerContract.getRemContractMonths() == 0 && currConsumerContract.getOverdue() != 0) {
             payCurrentBill();
 
             if (!getIsBankrupt()) {
-                currDistributor.terminateContract(currContract);
+                currDistributor.terminateContract(currConsumerContract);
             }
         }
     }
@@ -80,10 +80,10 @@ public final class Consumer extends Player {
      */
     public void payCurrentBill() {
         // Normal bill
-        int bill = currContract.getPrice();
+        int bill = currConsumerContract.getPrice();
 
         // Add overdue if existent
-        int overdue = currContract.getOverdue();
+        int overdue = currConsumerContract.getOverdue();
         if (overdue > 0) {
             bill += overdue;
         }
@@ -100,7 +100,7 @@ public final class Consumer extends Player {
             }
 
             // Has no previous overdue && cannot pay current bill => set overdue
-            currContract.setOverdue(Math
+            currConsumerContract.setOverdue(Math
                                     .toIntExact(
                                             Math.round(
                                                     Math.floor(Constants.OVERDUE_FACTOR * bill))));
@@ -113,14 +113,14 @@ public final class Consumer extends Player {
 
         // Had overdue, but paid it
         if (overdue > 0) {
-            currContract.clearOverdue();
+            currConsumerContract.clearOverdue();
         }
     }
 
     @Override
     public void goBankrupt() {
         setIsBankrupt(true);
-        currDistributor.terminateContract(currContract);
+        currDistributor.terminateContract(currConsumerContract);
     }
 
     @Override
