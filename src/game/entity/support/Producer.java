@@ -2,13 +2,12 @@ package game.entity.support;
 
 import game.element.EnergyType;
 import game.entity.player.Distributor;
-import game.strategy.Support;
 import game.observer.Observable;
 
 import java.util.ArrayList;
 import java.util.List;
 
-public class Producer extends Support implements Observable {
+public final class Producer extends Support implements Observable {
     public static final class MonthlyStats {
         private int month;
         private List<Integer> distributorsIds;
@@ -21,7 +20,7 @@ public class Producer extends Support implements Observable {
             return month;
         }
 
-        public void setMonth(int month) {
+        public void setMonth(final int month) {
             this.month = month;
         }
 
@@ -29,21 +28,12 @@ public class Producer extends Support implements Observable {
             return distributorsIds;
         }
 
-        public void setDistributorsIds(List<Integer> distributorsIds) {
+        public void setDistributorsIds(final List<Integer> distributorsIds) {
             this.distributorsIds = distributorsIds;
-        }
-
-        @Override
-        public String toString() {
-            return "{" +
-                    "mo=" + month +
-                    ", distribIds=" + distributorsIds +
-                    '}';
         }
     }
 
-    private List<Distributor> distributorList;
-    private int id;
+    private final List<Distributor> distributorList;
     private EnergyType energyType;
     private int maxDistributors;
     private double priceKW;
@@ -55,9 +45,9 @@ public class Producer extends Support implements Observable {
                     final int maxDistributors,
                     final double priceKW,
                     final int energyPerDistributor) {
+        super(id);
         this.distributorList = new ArrayList<>();
         this.monthlyStats = new ArrayList<>();
-        this.id = id;
         this.energyType = energyType;
         this.maxDistributors = maxDistributors;
         this.priceKW = priceKW;
@@ -68,7 +58,7 @@ public class Producer extends Support implements Observable {
         return monthlyStats;
     }
 
-    public void setMonthlyStats(List<MonthlyStats> monthlyStats) {
+    public void setMonthlyStats(final List<MonthlyStats> monthlyStats) {
         this.monthlyStats = monthlyStats;
     }
 
@@ -76,15 +66,11 @@ public class Producer extends Support implements Observable {
         return distributorList;
     }
 
-    public void setDistributorList(List<Distributor> distributorList) {
-        this.distributorList = distributorList;
-    }
-
     public int getId() {
         return id;
     }
 
-    public void setId(int id) {
+    public void setId(final int id) {
         this.id = id;
     }
 
@@ -119,21 +105,31 @@ public class Producer extends Support implements Observable {
     public void setEnergyPerDistributor(final int energyPerDistributor) {
         this.energyPerDistributor = energyPerDistributor;
     }
-
+    /**
+     * Creates & assigns producer-distributor "contract"
+     * @param distributor the producer signs with
+     */
     public void assignContract(final Distributor distributor) {
-        // Write to the producer's contract record
+        // Write to the producer's distributor record
         distributor.getProducerList().add(this);
+        // Write to the distributor's producer record
         distributorList.add(distributor);
     }
-
-    // TODO: replace with ProdDistribContract.terminate()
-    public void terminateContract(Distributor distributor) {
+    /**
+     * Terminates producer-distributor contract:
+     * @param distributor to terminate contract with
+     */
+    public void terminateContract(final Distributor distributor) {
+        // Removes producer from distributor's producerList
         distributor.getProducerList().remove(this);
+        // Removes distributor from producer's distributorList
         distributorList.remove(distributor);
     }
-
-
-    public void generateMonthlyStats(int currMonth) {
+    /**
+     * Generates monthly stats for this producer
+     * @param currMonth to generate monthly stats for
+     */
+    public void generateMonthlyStats(final int currMonth) {
         MonthlyStats currMonthlyStats = new MonthlyStats();
 
         // Set month
@@ -148,16 +144,7 @@ public class Producer extends Support implements Observable {
     }
 
     @Override
-    public String toString() {
-        return "Producer{" +
-                "id=" + id +
-                ", enPerDistrib=" + energyPerDistributor +
-                ", MoStats=" + monthlyStats +
-                '}';
-    }
-
-    @Override
-    public void notify(Object arg) {
+    public void notify(final Object arg) {
         List<Distributor> copyDistributorList = new ArrayList<>(distributorList);
         copyDistributorList.forEach(distributor -> distributor.update(null));
     }

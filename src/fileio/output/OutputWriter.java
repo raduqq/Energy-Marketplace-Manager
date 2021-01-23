@@ -24,7 +24,9 @@ public final class OutputWriter {
         outputFile = new File(outputPath);
         outputData = new OutputData();
     }
-
+    /**
+     * Transfers consumers from database to an OutputData object
+     */
     public void transferConsumers() {
         for (Consumer consumer : Consumers.getInstance().getConsumerList()) {
             outputData.getConsumers()
@@ -33,7 +35,9 @@ public final class OutputWriter {
                             consumer.getBudget()));
         }
     }
-
+    /**
+     * Transfers distributors from database to an OutputData object
+     */
     public void transferDistributors() {
         for (Distributor distributor : Distributors.getInstance().getDistributorList()) {
             List<DistributorOutputData
@@ -58,16 +62,18 @@ public final class OutputWriter {
                             contractOutputDataList));
         }
     }
-
+    /**
+     * Transfers producers from database to an OutputData object
+     */
     public void transferProducers() {
         for (Producer producer : Producers.getInstance().getProducerList()) {
-            List<ProducerOutputData.MonthlyStatsOutputData> monthlyStatsOutputDataList = new ArrayList<>();
+            List<ProducerOutputData.MonthlyStatsOutputData> moStatsOutputData = new ArrayList<>();
 
-            for (Producer.MonthlyStats monthlyStats : producer.getMonthlyStats()) {
-                monthlyStatsOutputDataList
+            for (Producer.MonthlyStats moStats : producer.getMonthlyStats()) {
+                moStatsOutputData
                                     .add(new ProducerOutputData
-                                            .MonthlyStatsOutputData(monthlyStats.getMonth(),
-                                                                    monthlyStats.getDistributorsIds()));
+                                            .MonthlyStatsOutputData(moStats.getMonth(),
+                                                                    moStats.getDistributorsIds()));
             }
 
             outputData.getEnergyProducers()
@@ -77,10 +83,9 @@ public final class OutputWriter {
                             producer.getPriceKW(),
                             producer.getEnergyType(),
                             producer.getEnergyPerDistributor(),
-                            monthlyStatsOutputDataList));
+                            moStatsOutputData));
         }
     }
-
     /**
      * Transfers data from databases to an OutputData object
      */
@@ -89,7 +94,6 @@ public final class OutputWriter {
         transferDistributors();
         transferProducers();
     }
-
     /**
      * Writes data from an OutputData object to file
      */
@@ -103,7 +107,6 @@ public final class OutputWriter {
             exception.printStackTrace();
         }
     }
-
     /**
      * Uploads data to output file
      */

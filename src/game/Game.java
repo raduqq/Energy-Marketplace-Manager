@@ -99,9 +99,14 @@ public final class Game {
 
         return stillAlive == 0;
     }
-
-    public void generateStats(int currMonth) {
-        Producers.getInstance().getProducerList().forEach(producer -> producer.generateMonthlyStats(currMonth));
+    /**
+     * Generate all stats needed at end of month
+     * @param currMonth to generate stats for
+     */
+    public void generateStats(final int currMonth) {
+        Producers.getInstance().getProducerList()
+                                    .forEach(producer ->
+                                                    producer.generateMonthlyStats(currMonth));
     }
 
     /**
@@ -129,12 +134,6 @@ public final class Game {
             if (i > 0) {
                 generateStats(i);
             }
-
-//            System.out.println("====================================================== MONTH " + i + "======================================================");
-//            // TESTING
-//            System.out.println(Consumers.getInstance().getConsumerList());
-//            System.out.println(Distributors.getInstance().getDistributorList());
-//            System.out.println(Producers.getInstance().getProducerList());
         }
     }
 }

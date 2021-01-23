@@ -1,6 +1,6 @@
 package game.factory.support;
 
-import game.strategy.Support;
+import game.entity.support.Support;
 
 public interface SupportFactory {
     /**

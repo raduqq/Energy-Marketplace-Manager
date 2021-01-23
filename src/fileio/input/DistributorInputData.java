@@ -46,7 +46,7 @@ public final class DistributorInputData {
         return energyNeededKW;
     }
 
-    public void setEnergyNeededKW(int energyNeededKW) {
+    public void setEnergyNeededKW(final int energyNeededKW) {
         this.energyNeededKW = energyNeededKW;
     }
 
@@ -54,7 +54,7 @@ public final class DistributorInputData {
         return producerStrategy;
     }
 
-    public void setProducerStrategy(EnergyChoiceStrategyType producerStrategy) {
+    public void setProducerStrategy(final EnergyChoiceStrategyType producerStrategy) {
         this.producerStrategy = producerStrategy;
     }
 }

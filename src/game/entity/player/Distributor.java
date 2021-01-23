@@ -5,12 +5,15 @@ import game.element.ConsumerContract;
 import game.factory.element.AbstractContractFactory;
 import game.factory.element.ContractFactory;
 import game.entity.support.Producer;
-import game.strategy.*;
 import game.observer.Observer;
+import game.strategy.EnergyChoiceStrategy;
+import game.strategy.EnergyChoiceStrategyType;
+import game.strategy.GreenChoiceStrategy;
+import game.strategy.PriceChoiceStrategy;
+import game.strategy.QuantityChoiceStrategy;
 
 import java.util.ArrayList;
 import java.util.List;
-import java.util.stream.Collectors;
 
 public final class Distributor extends Player implements Observer {
     private final List<ConsumerContract> consumerContractList;
@@ -22,8 +25,7 @@ public final class Distributor extends Player implements Observer {
     private int infrastructureCosts;
 
     private int energyNeededKW;
-    //TODO: may be deleted later (?)
-    private EnergyChoiceStrategyType producerStrategyType;
+    private final EnergyChoiceStrategyType producerStrategyType;
     private EnergyChoiceStrategy producerStrategy;
     private int productionCosts;
     private boolean needsProducers;
@@ -45,18 +47,28 @@ public final class Distributor extends Player implements Observer {
         determineProducerStrategy(producerStrategy);
         needsProducers = true;
     }
-
-
-    //TODO: can be replaced with factory
-    public void determineProducerStrategy(EnergyChoiceStrategyType energyChoiceStrategyType) {
+    /**
+     * Converts EnergyChoiceStraegyType ("PRICE") to EnergyChoiceStrategy(PriceStrategy)
+     * @param energyChoiceStrategyType to convert to energyChoiceStrategy
+     */
+    public void determineProducerStrategy(final EnergyChoiceStrategyType energyChoiceStrategyType) {
         switch (energyChoiceStrategyType) {
-            case GREEN -> producerStrategy = new GreenChoiceStrategy();
-            case PRICE -> producerStrategy = new PriceChoiceStrategy();
-            case QUANTITY -> producerStrategy = new QuantityChoiceStrategy();
-            default -> throw new IllegalStateException("Unexpected value: " + energyChoiceStrategyType);
+            case GREEN:
+                producerStrategy = new GreenChoiceStrategy();
+                break;
+            case PRICE:
+                producerStrategy = new PriceChoiceStrategy();
+                break;
+            case QUANTITY:
+                producerStrategy = new QuantityChoiceStrategy();
+                break;
+            default:
+                throw new IllegalStateException("Unexpected value: " + energyChoiceStrategyType);
         }
     }
-
+    /**
+     * Chooses & signs with this month's producers
+     */
     public void chooseProducers() {
         int totalEnergy = 0;
 
@@ -81,7 +93,9 @@ public final class Distributor extends Player implements Observer {
             potentialProducers.remove(0);
         }
     }
-
+    /**
+     * Computes this round's production costs
+     */
     public void computeProductionCosts() {
         int totalProductionCosts = 0;
 
@@ -92,9 +106,8 @@ public final class Distributor extends Player implements Observer {
         productionCosts = Math
                         .toIntExact(
                                 Math.round(
-                                        Math.floor((double) totalProductionCosts / 10)));
+                                        Math.floor((double) totalProductionCosts / Constants.PRODUCTION_COST_FACTOR)));
     }
-
     /**
      * Computes this round's contract prices
      */
@@ -122,7 +135,7 @@ public final class Distributor extends Player implements Observer {
         return energyNeededKW;
     }
 
-    public void setEnergyNeededKW(int energyNeededKW) {
+    public void setEnergyNeededKW(final int energyNeededKW) {
         this.energyNeededKW = energyNeededKW;
     }
 
@@ -134,26 +147,12 @@ public final class Distributor extends Player implements Observer {
         return producerStrategy;
     }
 
-    public void setProducerStrategy(EnergyChoiceStrategy producerStrategy) {
+    public void setProducerStrategy(final EnergyChoiceStrategy producerStrategy) {
         this.producerStrategy = producerStrategy;
-    }
-
-    public void setProducerStrategyType(EnergyChoiceStrategyType producerStrategyType) {
-        this.producerStrategyType = producerStrategyType;
-    }
-
-
-
-    public int getInfrastructureCosts() {
-        return infrastructureCosts;
     }
 
     public void setInfrastructureCosts(final int infrastructureCosts) {
         this.infrastructureCosts = infrastructureCosts;
-    }
-
-    public void setProductionCosts(final int productionCosts) {
-        this.productionCosts = productionCosts;
     }
 
     public List<ConsumerContract> getContractList() {
@@ -274,9 +273,9 @@ public final class Distributor extends Player implements Observer {
         List<ConsumerContract> expiredConsumerContracts = new ArrayList<>();
 
         // Fetching expired contracts
-        for (ConsumerContract consumerContract : getContractList()) {
-            if (consumerContract.getRemContractMonths() == 0 && consumerContract.getOverdue() == 0) {
-                expiredConsumerContracts.add(consumerContract);
+        for (ConsumerContract consContract : getContractList()) {
+            if (consContract.getRemContractMonths() == 0 && consContract.getOverdue() == 0) {
+                expiredConsumerContracts.add(consContract);
             }
         }
 
@@ -303,19 +302,7 @@ public final class Distributor extends Player implements Observer {
     }
 
     @Override
-    public String toString() {
-        return "Distributor{" +
-                "id=" + getId() +
-                ", price=" + getPrice() +
-                ", budget=" + getBudget() +
-                ", isBankrupt=" + getIsBankrupt() +
-                ", producerList=" + producerList.stream().map(Producer::getId).collect(Collectors.toList()) +
-                ", contractList=" + consumerContractList +
-                "}\n";
-    }
-
-    @Override
-    public void update(Object arg) {
+    public void update(final Object arg) {
         List<Producer> copyProducerList = new ArrayList<>(producerList);
 
         copyProducerList.forEach(producer -> producer.terminateContract(this));

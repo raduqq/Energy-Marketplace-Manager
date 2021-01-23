@@ -1,6 +1,5 @@
 package fileio.output;
 
-import game.element.EnergyType;
 import game.strategy.EnergyChoiceStrategyType;
 
 import java.util.List;
@@ -52,13 +51,13 @@ public final class DistributorOutputData {
     private boolean isBankrupt;
     private List<ContractOutputData> contracts;
 
-    public DistributorOutputData(int id,
-                                 int energyNeededKW,
-                                 int contractCost,
-                                 int budget,
-                                 EnergyChoiceStrategyType producerStrategy,
-                                 boolean isBankrupt,
-                                 List<ContractOutputData> contracts) {
+    public DistributorOutputData(final int id,
+                                 final int energyNeededKW,
+                                 final int contractCost,
+                                 final int budget,
+                                 final EnergyChoiceStrategyType producerStrategy,
+                                 final boolean isBankrupt,
+                                 final List<ContractOutputData> contracts) {
         this.id = id;
         this.energyNeededKW = energyNeededKW;
         this.contractCost = contractCost;
@@ -72,7 +71,7 @@ public final class DistributorOutputData {
         return id;
     }
 
-    public void setId(int id) {
+    public void setId(final int id) {
         this.id = id;
     }
 
@@ -80,7 +79,7 @@ public final class DistributorOutputData {
         return energyNeededKW;
     }
 
-    public void setEnergyNeededKW(int energyNeededKW) {
+    public void setEnergyNeededKW(final int energyNeededKW) {
         this.energyNeededKW = energyNeededKW;
     }
 
@@ -88,7 +87,7 @@ public final class DistributorOutputData {
         return contractCost;
     }
 
-    public void setContractCost(int contractCost) {
+    public void setContractCost(final int contractCost) {
         this.contractCost = contractCost;
     }
 
@@ -96,7 +95,7 @@ public final class DistributorOutputData {
         return budget;
     }
 
-    public void setBudget(int budget) {
+    public void setBudget(final int budget) {
         this.budget = budget;
     }
 
@@ -104,7 +103,7 @@ public final class DistributorOutputData {
         return producerStrategy;
     }
 
-    public void setProducerStrategy(EnergyChoiceStrategyType producerStrategy) {
+    public void setProducerStrategy(final EnergyChoiceStrategyType producerStrategy) {
         this.producerStrategy = producerStrategy;
     }
 
@@ -116,12 +115,11 @@ public final class DistributorOutputData {
         isBankrupt = bankrupt;
     }
 
-
     public List<ContractOutputData> getContracts() {
         return contracts;
     }
 
-    public void setContracts(List<ContractOutputData> contracts) {
+    public void setContracts(final List<ContractOutputData> contracts) {
         this.contracts = contracts;
     }
 }

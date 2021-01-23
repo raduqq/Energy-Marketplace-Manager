@@ -26,7 +26,6 @@ public final class Distributors {
     public List<Distributor> getDistributorList() {
         return distributorList;
     }
-
     /**
      * Adds distributor in the database
      * @param distributor to be added
@@ -34,7 +33,6 @@ public final class Distributors {
     public void addToDB(final Distributor distributor) {
         distributorList.add(distributor);
     }
-
     /**
      * Finds distributor in database by its id
      * @param id of distributor to be found
@@ -49,7 +47,6 @@ public final class Distributors {
 
         return  null;
     }
-
     /**
      * Applies monthly updates to distributors
      * @param costChanges to be applied
@@ -63,18 +60,10 @@ public final class Distributors {
             currDistributor.setInfrastructureCosts(costChange.getInfrastructureCost());
         }
     }
-
     /**
      * Resets the distributor database
      */
     public void reset() {
         instance = new Distributors();
-    }
-
-    @Override
-    public String toString() {
-        return "Distributors{" +
-                "distributorList=" + distributorList +
-                '}';
     }
 }

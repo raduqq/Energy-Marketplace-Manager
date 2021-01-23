@@ -13,7 +13,7 @@ public final class Main {
      *
      * @param args input and output files
      */
-    public static void main(final String[] args){
+    public static void main(final String[] args) {
         String inputPath = args[Constants.ZEROTH_ARG];
         String outputPath = args[Constants.FIRST_ARG];
 

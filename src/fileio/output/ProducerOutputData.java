@@ -1,7 +1,6 @@
 package fileio.output;
 
 import game.element.EnergyType;
-import game.strategy.EnergyChoiceStrategyType;
 
 import java.util.List;
 
@@ -10,8 +9,8 @@ public final class ProducerOutputData {
         private int month;
         private List<Integer> distributorsIds;
 
-        public MonthlyStatsOutputData(int month,
-                                      List<Integer> distributorsIds) {
+        public MonthlyStatsOutputData(final int month,
+                                      final List<Integer> distributorsIds) {
             this.month = month;
             this.distributorsIds = distributorsIds;
         }
@@ -20,7 +19,7 @@ public final class ProducerOutputData {
             return month;
         }
 
-        public void setMonth(int month) {
+        public void setMonth(final int month) {
             this.month = month;
         }
 
@@ -28,7 +27,7 @@ public final class ProducerOutputData {
             return distributorsIds;
         }
 
-        public void setDistributorsIds(List<Integer> distributorsIds) {
+        public void setDistributorsIds(final List<Integer> distributorsIds) {
             this.distributorsIds = distributorsIds;
         }
     }
@@ -40,12 +39,12 @@ public final class ProducerOutputData {
     private int energyPerDistributor;
     private List<MonthlyStatsOutputData> monthlyStats;
 
-    public ProducerOutputData(int id,
-                              int maxDistributors,
-                              double priceKW,
-                              EnergyType energyType,
-                              int energyPerDistributor,
-                              List<MonthlyStatsOutputData> monthlyStats) {
+    public ProducerOutputData(final int id,
+                              final int maxDistributors,
+                              final double priceKW,
+                              final EnergyType energyType,
+                              final int energyPerDistributor,
+                              final List<MonthlyStatsOutputData> monthlyStats) {
         this.id = id;
         this.maxDistributors = maxDistributors;
         this.priceKW = priceKW;
@@ -58,7 +57,7 @@ public final class ProducerOutputData {
         return id;
     }
 
-    public void setId(int id) {
+    public void setId(final int id) {
         this.id = id;
     }
 
@@ -66,7 +65,7 @@ public final class ProducerOutputData {
         return maxDistributors;
     }
 
-    public void setMaxDistributors(int maxDistributors) {
+    public void setMaxDistributors(final int maxDistributors) {
         this.maxDistributors = maxDistributors;
     }
 
@@ -74,7 +73,7 @@ public final class ProducerOutputData {
         return priceKW;
     }
 
-    public void setPriceKW(double priceKW) {
+    public void setPriceKW(final double priceKW) {
         this.priceKW = priceKW;
     }
 
@@ -82,7 +81,7 @@ public final class ProducerOutputData {
         return energyType;
     }
 
-    public void setEnergyType(EnergyType energyType) {
+    public void setEnergyType(final EnergyType energyType) {
         this.energyType = energyType;
     }
 
@@ -90,7 +89,7 @@ public final class ProducerOutputData {
         return energyPerDistributor;
     }
 
-    public void setEnergyPerDistributor(int energyPerDistributor) {
+    public void setEnergyPerDistributor(final int energyPerDistributor) {
         this.energyPerDistributor = energyPerDistributor;
     }
 
@@ -98,7 +97,7 @@ public final class ProducerOutputData {
         return monthlyStats;
     }
 
-    public void setMonthlyStats(List<MonthlyStatsOutputData> monthlyStats) {
+    public void setMonthlyStats(final List<MonthlyStatsOutputData> monthlyStats) {
         this.monthlyStats = monthlyStats;
     }
 }

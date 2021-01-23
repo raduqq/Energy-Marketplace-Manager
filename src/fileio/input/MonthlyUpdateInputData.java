@@ -32,7 +32,7 @@ public final class MonthlyUpdateInputData {
             return id;
         }
 
-        public void setId(int id) {
+        public void setId(final int id) {
             this.id = id;
         }
 
@@ -40,7 +40,7 @@ public final class MonthlyUpdateInputData {
             return energyPerDistributor;
         }
 
-        public void setEnergyPerDistributor(int energyPerDistributor) {
+        public void setEnergyPerDistributor(final int energyPerDistributor) {
             this.energyPerDistributor = energyPerDistributor;
         }
     }
@@ -69,7 +69,7 @@ public final class MonthlyUpdateInputData {
         return producerChanges;
     }
 
-    public void setProducerChanges(List<ProducerChangesInputData> producerChanges) {
+    public void setProducerChanges(final List<ProducerChangesInputData> producerChanges) {
         this.producerChanges = producerChanges;
     }
 }

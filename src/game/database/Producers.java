@@ -6,7 +6,7 @@ import game.entity.support.Producer;
 import java.util.ArrayList;
 import java.util.List;
 
-public class Producers {
+public final class Producers {
     private static Producers instance;
 
     private final List<Producer> producerList;
@@ -23,32 +23,36 @@ public class Producers {
         return instance;
     }
 
-    public static void setInstance(Producers instance) {
-        Producers.instance = instance;
-    }
-
     public List<Producer> getProducerList() {
         return producerList;
     }
+    /**
+     * Finds producer in database by his id
+     * @param id to find producer by
+     * @return producer with given id
+     */
+    public Producer findProducerByID(final int id) {
+        for (Producer producer : producerList) {
+            if (producer.getId() == id) {
+                return producer;
+            }
+        }
 
+        return null;
+    }
+    /**
+     * Adds producer to DB
+     * @param producer to add to DB
+     */
     public void addToDB(final Producer producer) {
         producerList.add(producer);
     }
-
     /**
-     * Resets the producer database
+     * Updates producers with current monthlyChanges
+     * @param prodChanges - producer changes of current month
      */
-    public void reset() { instance = new Producers(); }
-
-    @Override
-    public String toString() {
-        return "Producers{" +
-                "producerList=" + producerList +
-                '}';
-    }
-
-    public void update(List<MonthlyUpdateInputData.ProducerChangesInputData> producerChanges) {
-        for (MonthlyUpdateInputData.ProducerChangesInputData producerChange : producerChanges) {
+    public void update(final List<MonthlyUpdateInputData.ProducerChangesInputData> prodChanges) {
+        for (MonthlyUpdateInputData.ProducerChangesInputData producerChange : prodChanges) {
             // Finding producer to apply update to
             Producer currProducer = Producers
                                     .getInstance().findProducerByID(producerChange.getId());
@@ -62,15 +66,10 @@ public class Producers {
             currProducer.notify(null);
         }
     }
-
-    public Producer findProducerByID(final int id) {
-        for (Producer producer : producerList) {
-            if (producer.getId() == id) {
-                return producer;
-            }
-        }
-
-        return null;
+    /**
+     * Resets the producer database
+     */
+    public void reset() {
+        instance = new Producers();
     }
-
 }

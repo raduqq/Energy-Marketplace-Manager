@@ -21,4 +21,5 @@ public final class Constants {
     // Used for price calculations
     public static final double PROFIT_FACTOR = 0.2;
     public static final double OVERDUE_FACTOR = 1.2;
+    public static final int PRODUCTION_COST_FACTOR = 10;
 }

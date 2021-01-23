@@ -48,18 +48,8 @@ public abstract class AbstractContract {
     public void setRemContractMonths(final int remContractMonths) {
         this.remContractMonths = remContractMonths;
     }
-
     /**
      * Terminates contract (customer won't have a contract anymore)
      */
     public abstract void terminate();
-
-    @Override
-    public String toString() {
-        return "Contract{" +
-                "benefID=" + beneficiaryID +
-                ", price=" + price +
-                ", remMo=" + remContractMonths +
-                '}';
-    }
 }

@@ -1,6 +1,10 @@
 package game.observer;
 
 public interface Observable {
-    //TODO: has to be improved
+    /**
+     * Notifies all observers
+     * @param arg needed for notification
+     *            (this particular method: no argument is needed - failed to find a workaround)
+     */
     void notify(Object arg);
 }

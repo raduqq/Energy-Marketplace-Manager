@@ -13,7 +13,8 @@ public final class DistributorFactory implements PlayerFactory {
         int contractLength = Integer.parseInt(args[Constants.SECOND_ARG]);
         int infrastructureCosts = Integer.parseInt(args[Constants.THIRD_ARG]);
         int energyNeededKW = Integer.parseInt(args[Constants.FOURTH_ARG]);
-        EnergyChoiceStrategyType producerStrategy = EnergyChoiceStrategyType.valueOf(args[Constants.FIFTH_ARG]);
+        EnergyChoiceStrategyType producerStrategy = EnergyChoiceStrategyType
+                                                    .valueOf(args[Constants.FIFTH_ARG]);
 
         return new Distributor(id,
                 budget,

@@ -34,7 +34,7 @@ public final class OutputData {
         return energyProducers;
     }
 
-    public void setEnergyProducers(List<ProducerOutputData> energyProducers) {
+    public void setEnergyProducers(final List<ProducerOutputData> energyProducers) {
         this.energyProducers = energyProducers;
     }
 }

@@ -28,8 +28,8 @@ public final class Consumer extends Player {
         this.monthlyIncome = monthlyIncome;
     }
 
-    public void setCurrContract(final ConsumerContract currConsumerContract) {
-        this.currConsumerContract = currConsumerContract;
+    public void setCurrContract(final ConsumerContract consumerContract) {
+        this.currConsumerContract = consumerContract;
     }
 
     /**
@@ -61,12 +61,12 @@ public final class Consumer extends Player {
      * => only need to pay overdue bill (if existent)
      */
     public void resolvePastArrangement() {
-        // TODO: vezi enuntul, poate trebuie updatat
         if (currConsumerContract == null) {
             return;
         }
 
-        if (currConsumerContract.getRemContractMonths() == 0 && currConsumerContract.getOverdue() != 0) {
+        if (currConsumerContract.getRemContractMonths() == 0
+                && currConsumerContract.getOverdue() != 0) {
             payCurrentBill();
 
             if (!getIsBankrupt()) {
@@ -140,14 +140,5 @@ public final class Consumer extends Player {
         if (!getIsBankrupt()) {
             setBudget(getBudget() + monthlyIncome);
         }
-    }
-
-    @Override
-    public String toString() {
-        return "Consumer{" +
-                "id=" + getId() +
-                ", isBankrupt=" + getIsBankrupt() +
-                ", budget=" + getBudget() +
-                "}\n";
     }
 }

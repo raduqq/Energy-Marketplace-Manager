@@ -7,7 +7,7 @@ import java.util.Comparator;
 import java.util.List;
 import java.util.stream.Collectors;
 
-public class PriceChoiceStrategy implements EnergyChoiceStrategy{
+public final class PriceChoiceStrategy implements EnergyChoiceStrategy {
     @Override
     public List<Producer> chooseEnergyStrategy() {
         // Sort by price -> asc
@@ -18,7 +18,8 @@ public class PriceChoiceStrategy implements EnergyChoiceStrategy{
                 .thenComparing(Producer::getId);
 
         return Producers.getInstance().getProducerList().stream()
-                .filter(producer -> producer.getDistributorList().size() < producer.getMaxDistributors())
+                .filter(producer ->
+                        producer.getDistributorList().size() < producer.getMaxDistributors())
                 .sorted(priceProdCmp)
                 .collect(Collectors.toList());
     }

@@ -1,17 +1,18 @@
 package game.factory.support;
 
+import common.Constants;
 import game.element.EnergyType;
 import game.entity.support.Producer;
-import game.strategy.Support;
+import game.entity.support.Support;
 
-public class ProducerFactory implements SupportFactory {
+public final class ProducerFactory implements SupportFactory {
     @Override
     public Support create(String[] args) {
-        int id = Integer.parseInt(args[0]);
-        EnergyType energyType = EnergyType.valueOf(args[1]);
-        int maxDistributors = Integer.parseInt(args[2]);
-        double priceKW = Double.parseDouble(args[3]);
-        int energyPerDistributor = Integer.parseInt(args[4]);
+        int id = Integer.parseInt(args[Constants.ZEROTH_ARG]);
+        EnergyType energyType = EnergyType.valueOf(args[Constants.FIRST_ARG]);
+        int maxDistributors = Integer.parseInt(args[Constants.SECOND_ARG]);
+        double priceKW = Double.parseDouble(args[Constants.THIRD_ARG]);
+        int energyPerDistributor = Integer.parseInt(args[Constants.FOURTH_ARG]);
 
         return new Producer(id, energyType, maxDistributors, priceKW, energyPerDistributor);
     }
