@@ -9,12 +9,46 @@ import java.util.ArrayList;
 import java.util.List;
 
 public class Producer extends Support implements Observable {
+    public static final class MonthlyStats {
+        private int month;
+        private List<Integer> distributorsIds;
+
+        public MonthlyStats() {
+            distributorsIds = new ArrayList<>();
+        }
+
+        public int getMonth() {
+            return month;
+        }
+
+        public void setMonth(int month) {
+            this.month = month;
+        }
+
+        public List<Integer> getDistributorsIds() {
+            return distributorsIds;
+        }
+
+        public void setDistributorsIds(List<Integer> distributorsIds) {
+            this.distributorsIds = distributorsIds;
+        }
+
+        @Override
+        public String toString() {
+            return "{" +
+                    "mo=" + month +
+                    ", distribIds=" + distributorsIds +
+                    '}';
+        }
+    }
+
     private List<Distributor> distributorList;
     private int id;
     private EnergyType energyType;
     private int maxDistributors;
     private double priceKW;
     private int energyPerDistributor;
+    private List<MonthlyStats> monthlyStats;
 
     public Producer(final int id,
                     final EnergyType energyType,
@@ -22,11 +56,20 @@ public class Producer extends Support implements Observable {
                     final double priceKW,
                     final int energyPerDistributor) {
         this.distributorList = new ArrayList<>();
+        this.monthlyStats = new ArrayList<>();
         this.id = id;
         this.energyType = energyType;
         this.maxDistributors = maxDistributors;
         this.priceKW = priceKW;
         this.energyPerDistributor = energyPerDistributor;
+    }
+
+    public List<MonthlyStats> getMonthlyStats() {
+        return monthlyStats;
+    }
+
+    public void setMonthlyStats(List<MonthlyStats> monthlyStats) {
+        this.monthlyStats = monthlyStats;
     }
 
     public List<Distributor> getDistributorList() {
@@ -90,13 +133,27 @@ public class Producer extends Support implements Observable {
     }
 
 
+    public void generateMonthlyStats(int currMonth) {
+        MonthlyStats currMonthlyStats = new MonthlyStats();
+
+        // Set month
+        currMonthlyStats.setMonth(currMonth);
+        // Set distributorIds
+        for (Distributor distributor : distributorList) {
+            currMonthlyStats.getDistributorsIds().add(distributor.getId());
+        }
+
+        // Add current month stats to overall monthly stats
+        monthlyStats.add(currMonthlyStats);
+    }
 
     @Override
     public String toString() {
         return "Producer{" +
                 "id=" + id +
-                ", energyPerDistributor=" + energyPerDistributor +
-                "}";
+                ", enPerDistrib=" + energyPerDistributor +
+                ", MoStats=" + monthlyStats +
+                '}';
     }
 
     @Override

@@ -10,6 +10,7 @@ import game.observer.Observer;
 
 import java.util.ArrayList;
 import java.util.List;
+import java.util.stream.Collectors;
 
 public final class Distributor extends Player implements Observer {
     private final List<Contract> contractList;
@@ -115,6 +116,32 @@ public final class Distributor extends Player implements Observer {
                     + profit));
         }
     }
+
+    public int getEnergyNeededKW() {
+        return energyNeededKW;
+    }
+
+    public void setEnergyNeededKW(int energyNeededKW) {
+        this.energyNeededKW = energyNeededKW;
+    }
+
+    public EnergyChoiceStrategyType getProducerStrategyType() {
+        return producerStrategyType;
+    }
+
+    public EnergyChoiceStrategy getProducerStrategy() {
+        return producerStrategy;
+    }
+
+    public void setProducerStrategy(EnergyChoiceStrategy producerStrategy) {
+        this.producerStrategy = producerStrategy;
+    }
+
+    public void setProducerStrategyType(EnergyChoiceStrategyType producerStrategyType) {
+        this.producerStrategyType = producerStrategyType;
+    }
+
+
 
     public int getInfrastructureCosts() {
         return infrastructureCosts;
@@ -280,7 +307,7 @@ public final class Distributor extends Player implements Observer {
                 ", price=" + getPrice() +
                 ", budget=" + getBudget() +
                 ", isBankrupt=" + getIsBankrupt() +
-                ", producerList=" + producerList +
+                ", producerList=" + producerList.stream().map(Producer::getId).collect(Collectors.toList()) +
                 ", contractList=" + contractList +
                 "}\n";
     }

@@ -1,12 +1,14 @@
 package game;
 
 import fileio.input.MonthlyUpdateInputData;
+import fileio.output.OutputWriter;
 import game.database.Consumers;
 import game.database.Distributors;
 import game.database.Producers;
 import game.element.Contract;
 import game.entity.player.Consumer;
 import game.entity.player.Distributor;
+import game.entity.support.Producer;
 
 import java.util.List;
 
@@ -100,6 +102,10 @@ public final class Game {
         return stillAlive == 0;
     }
 
+    public void generateStats(int currMonth) {
+        Producers.getInstance().getProducerList().forEach(producer -> producer.generateMonthlyStats(currMonth));
+    }
+
     /**
      * Simulates numberOfTurns rounds
      * @param monthlyUpdates to be inserted every month
@@ -120,6 +126,17 @@ public final class Game {
             updatePlayers();
             takeTurns();
             updateElements();
+
+            // Setup round (round 0) doesn't get stats
+            if (i > 0) {
+                generateStats(i);
+            }
+
+            System.out.println("====================================================== MONTH " + i + "======================================================");
+            // TESTING
+            System.out.println(Consumers.getInstance().getConsumerList());
+            System.out.println(Distributors.getInstance().getDistributorList());
+            System.out.println(Producers.getInstance().getProducerList());
         }
     }
 }

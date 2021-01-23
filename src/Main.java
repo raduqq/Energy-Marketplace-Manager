@@ -1,9 +1,8 @@
 import common.Constants;
 import fileio.input.InputLoader;
+import fileio.output.OutputWriter;
 import game.Game;
-import game.database.Consumers;
-import game.database.Distributors;
-import game.database.Producers;
+
 
 public final class Main {
     private Main() {
@@ -25,16 +24,9 @@ public final class Main {
         // Playing
         Game.getInstance().play(inputLoader.getInputData().getMonthlyUpdates());
 
-        /*
         // Uploading output
         OutputWriter outputWriter = new OutputWriter(outputPath);
         outputWriter.uploadData();
-         */
-
-        // TESTING
-        System.out.println(Consumers.getInstance());
-        System.out.println(Distributors.getInstance());
-        System.out.println(Producers.getInstance());
 
         // Clearing all data
         Game.getInstance().reset();
